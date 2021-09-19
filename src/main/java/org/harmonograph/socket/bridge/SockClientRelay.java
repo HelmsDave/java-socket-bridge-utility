@@ -62,32 +62,22 @@ public class SockClientRelay implements Runnable {
                  final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter, Utility.kBufferSize)) {
                 
                 System.out.print(String.format("Connected%n"));
-                //final char[] tBuffer = new char[Utility.kBufferSize];
                 while (true) {
-                    //final int tRead = tPullBufReader.read(tBuffer);
-                    //if (tRead < 0)
-                    //{
-                    //    break;
-                    //}
-                    //tPushBufWriter.write(tBuffer, 0, tRead);
-                    
-                    //if (_verbose && (tRead > 40))
-                    //{
-                    //    final String tSnippet = new String(tBuffer, 0, 40);
-                    //    System.out.println(tSnippet);
-                    //}
-                    
+
                     final String tLine = tPullBufReader.readLine();
+                    if (_verbose)
+                    {
+                        System.out.println(tLine);
+                    }                    
+                    
                     if (tLine == null) {
                         System.out.print(String.format("Connection lost%n"));
                         return;
                     }
+                    System.out.print(String.format("Write line%n"));
                     tPushBufWriter.write(tLine);
                     tPushBufWriter.newLine();
-                    if (_verbose)
-                    {
-                        System.out.println(tLine);
-                    }
+
                 }
             } catch (UnknownHostException ex) {
                 System.out.println("Push Server not found: " + ex.getMessage());

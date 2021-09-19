@@ -31,7 +31,9 @@ public class ClientConnectionMgrPush implements Runnable {
                 final OutputStreamWriter tWriter = new OutputStreamWriter(tOutputStream);
                 final BufferedWriter tBufWriter = new BufferedWriter(tWriter, Utility.kBufferSize)) {
 
-            System.out.print(String.format("Connected%n"));
+            System.out.print(String.format("Push Connected from %s %d%n",
+                    _socket.getInetAddress().getCanonicalHostName(),
+                    _socket.getPort()));
             while (true) {
                 final String tLine = _queue.take();
                 if (tLine == null) {

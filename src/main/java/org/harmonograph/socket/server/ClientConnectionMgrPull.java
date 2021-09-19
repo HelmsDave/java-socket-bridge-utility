@@ -31,11 +31,18 @@ public class ClientConnectionMgrPull implements Runnable {
                 final InputStreamReader tPullReader = new InputStreamReader(tPullInputStream);
                 final BufferedReader tPullBufReader = new BufferedReader(tPullReader, Utility.kBufferSize)) {
 
+            System.out.print(String.format(
+                    "Pull Connected from %s %d%n",
+                    _socket.getInetAddress().getCanonicalHostName(),
+                    _socket.getPort()));            
             while (true) {
                 
                 final String tLine = tPullBufReader.readLine();
                 if (tLine == null) {
-                    System.out.print(String.format("Connection lost%n"));
+                    System.out.print(String.format(
+                            "Pull Connection lost from %s %d%n",
+                    _socket.getInetAddress().getCanonicalHostName(),
+                    _socket.getPort()));            
                     return;
                 }
                 _queue.put(tLine);

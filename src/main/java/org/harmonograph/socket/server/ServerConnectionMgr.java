@@ -55,7 +55,7 @@ public class ServerConnectionMgr implements Runnable {
             {
                 tHandler = new ClientConnectionMgrPull(tClient, _queue, _verbose);
             } else {
-                 tHandler = new ClientConnectionMgrPush(tClient, _queue, _verbose);
+                tHandler = new ClientConnectionMgrPush(tClient, _queue, _verbose);
             }
                 
             final Thread tServiceThread = new Thread(tHandler, tConnectionName);
