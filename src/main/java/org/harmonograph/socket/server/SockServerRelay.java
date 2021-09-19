@@ -9,38 +9,38 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class SockServerRelay {
     
-    protected final ServerConnectionMgr _pullServer;
-    protected final ServerConnectionMgr _pushServer;
+    protected final ServerConnectionMgr _uplinkServer;
+    protected final ServerConnectionMgr _downlinkServer;
     
-    protected final Thread _pullServerThread;
-    protected final Thread _pushServerThread;
+    protected final Thread _uplinkServerThread;
+    protected final Thread _downlinkServerThread;
     
     protected final LinkedBlockingQueue<String> _queue;    
     
     public SockServerRelay(
-            final short aPullPort,
-            final short aPushPort,
+            final short aUplinkPort,
+            final short aDownlinkPort,
             final boolean aVerbose)
     {
         _queue = new LinkedBlockingQueue<>();
-        _pullServer = new ServerConnectionMgr(
-                aPullPort, aVerbose, _queue, true);
-        _pullServerThread = new Thread(_pullServer, "Pull Server");
+        _uplinkServer = new ServerConnectionMgr(
+                aUplinkPort, aVerbose, _queue, true);
+        _uplinkServerThread = new Thread(_uplinkServer, "Uplink Server");
         
         
-        _pushServer = new ServerConnectionMgr(
-                aPushPort, aVerbose, _queue, false);
-        _pushServerThread = new Thread(_pushServer, "Push Server");
+        _downlinkServer = new ServerConnectionMgr(
+                aDownlinkPort, aVerbose, _queue, false);
+        _downlinkServerThread = new Thread(_downlinkServer, "Downlink Server");
         
         System.out.print(String.format(
-                "SockServerRelay, pull %d, push %d, verbose %b%n",
-                aPullPort, aPushPort, aVerbose));        
+                "SockServerRelay, uplink %d, downlink %d, verbose %b%n",
+                aUplinkPort, aDownlinkPort, aVerbose));        
     }
 
     public void start()
     {
-        _pullServerThread.start();
-        _pushServerThread.start();
+        _uplinkServerThread.start();
+        _downlinkServerThread.start();
     }
   
 }

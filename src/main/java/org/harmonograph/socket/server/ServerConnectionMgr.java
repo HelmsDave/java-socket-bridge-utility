@@ -9,13 +9,13 @@ import org.harmonograph.socket.util.Utility;
 
 /** 
  * Connection manager for single server connection.
- * Any one server is either pull (receiving) or push (serving) messages.
+ * Any one server is either uplink (receiving) or downlink (serving) messages.
  */
 public class ServerConnectionMgr implements Runnable {
     
     protected final short _port;
     protected final boolean _verbose;
-    protected final boolean _pullMode;
+    protected final boolean _uplinkMode;
     
     protected final LinkedBlockingQueue<String> _queue;    
     
@@ -23,12 +23,12 @@ public class ServerConnectionMgr implements Runnable {
             final short aPort,
             final boolean aVerbose,
             final LinkedBlockingQueue<String> aQueue,
-            final boolean aPullMode)
+            final boolean aUplinkMode)
     {
         _port = aPort;
         _verbose = aVerbose;
         _queue = aQueue;
-        _pullMode = aPullMode;
+        _uplinkMode = aUplinkMode;
     }
 
     public void run()
@@ -51,11 +51,11 @@ public class ServerConnectionMgr implements Runnable {
                     + tClient.getPort();
             
             final Runnable tHandler;
-            if (_pullMode)
+            if (_uplinkMode)
             {
-                tHandler = new ClientConnectionMgrPull(tClient, _queue, _verbose);
+                tHandler = new ClientConnectionMgrUplink(tClient, _queue, _verbose);
             } else {
-                tHandler = new ClientConnectionMgrPush(tClient, _queue, _verbose);
+                tHandler = new ClientConnectionMgrDownlink(tClient, _queue, _verbose);
             }
                 
             final Thread tServiceThread = new Thread(tHandler, tConnectionName);

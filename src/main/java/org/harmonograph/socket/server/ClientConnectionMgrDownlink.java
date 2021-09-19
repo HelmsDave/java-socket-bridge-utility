@@ -8,14 +8,14 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.harmonograph.socket.util.Utility;
 
-/** Connection manager for single client connection, push mode. */
-public class ClientConnectionMgrPush implements Runnable {
+/** Connection manager for single client connection, downlink mode. */
+public class ClientConnectionMgrDownlink implements Runnable {
 
     protected final Socket _socket;
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
 
-    public ClientConnectionMgrPush(
+    public ClientConnectionMgrDownlink(
             final Socket aSocket,
             final LinkedBlockingQueue<String> aQueue,
             final boolean aVerbose) {
@@ -31,7 +31,7 @@ public class ClientConnectionMgrPush implements Runnable {
                 final OutputStreamWriter tWriter = new OutputStreamWriter(tOutputStream);
                 final BufferedWriter tBufWriter = new BufferedWriter(tWriter, Utility.kBufferSize)) {
 
-            System.out.print(String.format("Push Connected from %s %d%n",
+            System.out.print(String.format("Downlink Connected from %s %d%n",
                     _socket.getInetAddress().getCanonicalHostName(),
                     _socket.getPort()));
             while (true) {

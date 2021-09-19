@@ -88,9 +88,9 @@ public class SockClientRelay implements Runnable {
                             System.out.print(String.format(
                                     "Sent %d lines, %d chars",
                                     _reportLines, _reportChars));
+                            System.out.println(tLine);
                             _reportTimeLast = System.currentTimeMillis();
                         }                        
-                        System.out.println(tLine);
                     }                       
                     
                     tPushBufWriter.write(tLine);

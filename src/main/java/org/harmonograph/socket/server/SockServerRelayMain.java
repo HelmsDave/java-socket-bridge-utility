@@ -12,21 +12,21 @@ public final class SockServerRelayMain {
      * @param aArgs the command line arguments
      */
     public static void main(final String[] aArgs) throws NumberFormatException {
-        short tPullPort = 30003;
-        short tPushPort = 30004;
+        short tUplinkPort = 30004;
+        short tDownlinkPort = 30003;
         boolean tVerbose = false;
 
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
             switch (aArgs[tIndex])
             {
-                case "-pullPort":
-                    final String tPullPortString = aArgs[++tIndex];
-                    tPullPort = Short.parseShort(tPullPortString);
+                case "-uplinkPort":
+                    final String tUplinkPortString = aArgs[++tIndex];
+                    tUplinkPort = Short.parseShort(tUplinkPortString);
                     break;
-                case "-pushPort":
-                    final String tPushPortString = aArgs[++tIndex];
-                    tPushPort = Short.parseShort(tPushPortString);
+                case "-downlinkPort":
+                    final String tDownlinkPortString = aArgs[++tIndex];
+                    tDownlinkPort = Short.parseShort(tDownlinkPortString);
                     break;
                 case "-verbose":
                     tVerbose = true;
@@ -35,7 +35,7 @@ public final class SockServerRelayMain {
         }
         
         final SockServerRelay tServer
-                = new SockServerRelay(tPullPort, tPushPort, tVerbose);
+                = new SockServerRelay(tUplinkPort, tDownlinkPort, tVerbose);
         tServer.start();
     }
     

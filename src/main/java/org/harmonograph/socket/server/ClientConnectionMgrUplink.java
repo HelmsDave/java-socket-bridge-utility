@@ -8,14 +8,14 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.harmonograph.socket.util.Utility;
 
-/** Connection manager for single client connection, pull mode. */
-public class ClientConnectionMgrPull implements Runnable {
+/** Connection manager for single client connection, uplink mode. */
+public class ClientConnectionMgrUplink implements Runnable {
 
     protected final Socket _socket;
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
 
-    public ClientConnectionMgrPull(
+    public ClientConnectionMgrUplink(
             final Socket aSocket,
             final LinkedBlockingQueue<String> aQueue,
             final boolean aVerbose) {
@@ -27,17 +27,17 @@ public class ClientConnectionMgrPull implements Runnable {
     @Override
     public void run() {
 
-        try (final InputStream tPullInputStream = _socket.getInputStream();
-                final InputStreamReader tPullReader = new InputStreamReader(tPullInputStream);
-                final BufferedReader tPullBufReader = new BufferedReader(tPullReader, Utility.kBufferSize)) {
+        try (final InputStream tInputStream = _socket.getInputStream();
+                final InputStreamReader tReader = new InputStreamReader(tInputStream);
+                final BufferedReader tBufReader = new BufferedReader(tReader, Utility.kBufferSize)) {
 
             System.out.print(String.format(
-                    "Pull Connected from %s %d%n",
+                    "Uplink Connected from %s %d%n",
                     _socket.getInetAddress().getCanonicalHostName(),
                     _socket.getPort()));            
             while (true) {
                 
-                final String tLine = tPullBufReader.readLine();
+                final String tLine = tBufReader.readLine();
                 if (tLine == null) {
                     System.out.print(String.format(
                             "Pull Connection lost from %s %d%n",
@@ -51,7 +51,7 @@ public class ClientConnectionMgrPull implements Runnable {
                     System.out.println(tLine);
                 }
             }
-
+            
         } catch (InterruptedException ex) {
             System.out.println("Queue error: " + ex.getMessage());
         } catch (IOException ex) {
