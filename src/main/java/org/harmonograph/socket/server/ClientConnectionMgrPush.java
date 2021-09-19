@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.harmonograph.socket.util.Utility;
 
 /** Connection manager for single client connection, push mode. */
 public class ClientConnectionMgrPush implements Runnable {
@@ -28,7 +29,7 @@ public class ClientConnectionMgrPush implements Runnable {
 
         try (final OutputStream tOutputStream = _socket.getOutputStream();
                 final OutputStreamWriter tWriter = new OutputStreamWriter(tOutputStream);
-                final BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
+                final BufferedWriter tBufWriter = new BufferedWriter(tWriter, Utility.kBufferSize)) {
 
             System.out.print(String.format("Connected%n"));
             while (true) {
@@ -36,7 +37,7 @@ public class ClientConnectionMgrPush implements Runnable {
                 if (tLine == null) {
                     return;
                 }
-                tBufWriter.append(tLine);
+                tBufWriter.write(tLine);
                 tBufWriter.newLine();
             }
         } catch (InterruptedException ex) {

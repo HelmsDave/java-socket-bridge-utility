@@ -53,22 +53,36 @@ public class SockClientRelay implements Runnable {
         try (final Socket tPullSock = new Socket(_pullHost, _pullPort);
              final InputStream tPullInputStream = tPullSock.getInputStream();
              final InputStreamReader tPullReader = new InputStreamReader(tPullInputStream);
-             final BufferedReader tPullBufReader = new BufferedReader(tPullReader)) {
+             final BufferedReader tPullBufReader = new BufferedReader(tPullReader, Utility.kBufferSize)) {
 
             System.out.print(String.format("Connecting to push server %s:%d%n", _pushHost, _pushPort));
             try (final Socket tPushSock = new Socket(_pushHost, _pushPort);
                  final OutputStream tPushOutputStream = tPushSock.getOutputStream();
                  final OutputStreamWriter tPushWriter = new OutputStreamWriter(tPushOutputStream);
-                 final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter)) {
+                 final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter, Utility.kBufferSize)) {
                 
                 System.out.print(String.format("Connected%n"));
+                final char[] tBuffer = new char[Utility.kBufferSize];
                 while (true) {
+                    //final int tRead = tPullBufReader.read(tBuffer);
+                    //if (tRead < 0)
+                    //{
+                    //    break;
+                    //}
+                    //tPushBufWriter.write(tBuffer, 0, tRead);
+                    
+                    //if (_verbose && (tRead > 40))
+                    //{
+                    //    final String tSnippet = new String(tBuffer, 0, 40);
+                    //    System.out.println(tSnippet);
+                    //}
+                    
                     final String tLine = tPullBufReader.readLine();
                     if (tLine == null) {
                         System.out.print(String.format("Connection lost%n"));
                         return;
                     }
-                    tPushBufWriter.append(tLine);
+                    tPushBufWriter.write(tLine);
                     tPushBufWriter.newLine();
                     if (_verbose)
                     {

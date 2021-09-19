@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.harmonograph.socket.util.Utility;
 
 /** Connection manager for single client connection, pull mode. */
 public class ClientConnectionMgrPull implements Runnable {
@@ -28,7 +29,7 @@ public class ClientConnectionMgrPull implements Runnable {
 
         try (final InputStream tPullInputStream = _socket.getInputStream();
                 final InputStreamReader tPullReader = new InputStreamReader(tPullInputStream);
-                final BufferedReader tPullBufReader = new BufferedReader(tPullReader)) {
+                final BufferedReader tPullBufReader = new BufferedReader(tPullReader, Utility.kBufferSize)) {
 
             while (true) {
                 
