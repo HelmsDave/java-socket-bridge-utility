@@ -9,11 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class SockServerRelay {
     
-    protected final ServerConnectionMgr _uplinkServer;
-    protected final ServerConnectionMgr _downlinkServer;
-    
-    protected final Thread _uplinkServerThread;
-    protected final Thread _downlinkServerThread;
+    protected final ServerConnectionMgrUplink _uplinkServer;
+    protected final ServerConnectionMgrDownlink _downlinkServer;
     
     protected final LinkedBlockingQueue<String> _queue;    
     
@@ -23,14 +20,11 @@ public class SockServerRelay {
             final boolean aVerbose)
     {
         _queue = new LinkedBlockingQueue<>();
-        _uplinkServer = new ServerConnectionMgr(
-                aUplinkPort, aVerbose, _queue, true);
-        _uplinkServerThread = new Thread(_uplinkServer, "Uplink Server");
+        _uplinkServer = new ServerConnectionMgrUplink(
+                aUplinkPort, aVerbose, _queue);
         
-        
-        _downlinkServer = new ServerConnectionMgr(
-                aDownlinkPort, aVerbose, _queue, false);
-        _downlinkServerThread = new Thread(_downlinkServer, "Downlink Server");
+        _downlinkServer = new ServerConnectionMgrDownlink(
+                aDownlinkPort, aVerbose, _queue);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",
@@ -39,8 +33,8 @@ public class SockServerRelay {
 
     public void start()
     {
-        _uplinkServerThread.start();
-        _downlinkServerThread.start();
+        _uplinkServer.start();
+        _downlinkServer.start();
     }
   
 }

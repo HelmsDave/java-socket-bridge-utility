@@ -14,14 +14,25 @@ public class ClientConnectionMgrDownlink implements Runnable {
     protected final Socket _socket;
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
+    protected boolean _connected;
 
     public ClientConnectionMgrDownlink(
             final Socket aSocket,
-            final LinkedBlockingQueue<String> aQueue,
             final boolean aVerbose) {
         _socket = aSocket;
-        _queue = aQueue;
+        _queue = new LinkedBlockingQueue<>();
         _verbose = aVerbose;
+        _connected = true;
+    }
+    
+    public LinkedBlockingQueue<String> getQueue()
+    {
+        return _queue;
+    }
+    
+    public boolean isConnected()
+    {
+        return _connected;
     }
 
     @Override
@@ -37,6 +48,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
             while (true) {
                 final String tLine = _queue.take();
                 if (tLine == null) {
+                    _connected = false;
                     return;
                 }
                 tBufWriter.write(tLine);
@@ -47,5 +59,6 @@ public class ClientConnectionMgrDownlink implements Runnable {
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
         }
+        _connected = false;
     }
 }

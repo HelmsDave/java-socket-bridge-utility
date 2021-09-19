@@ -46,10 +46,6 @@ public class ClientConnectionMgrUplink implements Runnable {
                     return;
                 }
                 _queue.put(tLine);
-
-                if (_verbose) {
-                    System.out.println(tLine);
-                }
             }
             
         } catch (InterruptedException ex) {
