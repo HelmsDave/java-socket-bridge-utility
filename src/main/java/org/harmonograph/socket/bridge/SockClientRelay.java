@@ -35,6 +35,10 @@ public class SockClientRelay implements Runnable {
         _pushHost = aPushHost;
         _pushPort = aPushPort;
         _verbose = aVerbose;
+        
+        System.out.print(String.format(
+                "SockClientRelay, pull %s %d, push %s %d, verbose  ",
+                _pullHost, _pullPort, _pushHost, _pushPort, _verbose));
     }
 
     @Override
@@ -64,20 +68,20 @@ public class SockClientRelay implements Runnable {
                 System.out.print(String.format("Connected%n"));
                 while (true) {
 
-                    final String tLine = tPullBufReader.readLine();
-                    if (_verbose)
-                    {
-                        System.out.println(tLine);
-                    }                    
+                    final String tLine = tPullBufReader.readLine();                
                     
                     if (tLine == null) {
                         System.out.print(String.format("Connection lost%n"));
                         return;
                     }
+                    //if (_verbose)
+                    {
+                        System.out.println(tLine);
+                    }                       
+                    
                     System.out.print(String.format("Write line%n"));
                     tPushBufWriter.write(tLine);
                     tPushBufWriter.newLine();
-
                 }
             } catch (UnknownHostException ex) {
                 System.out.println("Push Server not found: " + ex.getMessage());

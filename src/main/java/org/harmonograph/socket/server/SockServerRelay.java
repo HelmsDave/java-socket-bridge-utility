@@ -31,6 +31,10 @@ public class SockServerRelay {
         _pushServer = new ServerConnectionMgr(
                 aPushPort, aVerbose, _queue, false);
         _pushServerThread = new Thread(_pushServer, "Push Server");
+        
+        System.out.print(String.format(
+                "SockServerRelay, pull %d, push %d, verbose  ",
+                aPullPort, aPushPort, aVerbose));        
     }
 
     public void start()
