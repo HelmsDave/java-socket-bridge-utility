@@ -25,6 +25,10 @@ public class SockClientRelay implements Runnable {
     protected final short _pushPort;
     protected final boolean _verbose;
     
+    protected long _reportTimeLast;
+    protected int _reportLines;
+    protected int _reportChars; 
+    
     public SockClientRelay(
             final String aPullHost, final short aPullPort,
             final String aPushHost, final short aPushPort,
@@ -37,7 +41,7 @@ public class SockClientRelay implements Runnable {
         _verbose = aVerbose;
         
         System.out.print(String.format(
-                "SockClientRelay, pull %s %d, push %s %d, verbose  ",
+                "SockClientRelay, pull %s %d, push %s %d, verbose %b%n",
                 _pullHost, _pullPort, _pushHost, _pushPort, _verbose));
     }
 
@@ -74,12 +78,21 @@ public class SockClientRelay implements Runnable {
                         System.out.print(String.format("Connection lost%n"));
                         return;
                     }
-                    //if (_verbose)
+                    
+                    if (_verbose)
                     {
+                        ++_reportLines;
+                        _reportChars += tLine.length();
+                        if (System.currentTimeMillis() - _reportTimeLast > Utility.kSleepTimeMillis)
+                        {
+                            System.out.print(String.format(
+                                    "Sent %d lines, %d chars",
+                                    _reportLines, _reportChars));
+                            _reportTimeLast = System.currentTimeMillis();
+                        }                        
                         System.out.println(tLine);
                     }                       
                     
-                    System.out.print(String.format("Write line%n"));
                     tPushBufWriter.write(tLine);
                     tPushBufWriter.newLine();
                 }

@@ -16,7 +16,7 @@ public final class SockServerRelayMain {
         short tPushPort = 30004;
         boolean tVerbose = false;
 
-        for (int tIndex = 0; tIndex < aArgs.length - 1; ++tIndex)
+        for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
             switch (aArgs[tIndex])
             {

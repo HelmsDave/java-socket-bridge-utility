@@ -33,7 +33,7 @@ public class SockServerRelay {
         _pushServerThread = new Thread(_pushServer, "Push Server");
         
         System.out.print(String.format(
-                "SockServerRelay, pull %d, push %d, verbose  ",
+                "SockServerRelay, pull %d, push %d, verbose %b%n",
                 aPullPort, aPushPort, aVerbose));        
     }
 
