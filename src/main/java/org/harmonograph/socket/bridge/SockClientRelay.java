@@ -62,7 +62,7 @@ public class SockClientRelay implements Runnable {
                  final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter, Utility.kBufferSize)) {
                 
                 System.out.print(String.format("Connected%n"));
-                final char[] tBuffer = new char[Utility.kBufferSize];
+                //final char[] tBuffer = new char[Utility.kBufferSize];
                 while (true) {
                     //final int tRead = tPullBufReader.read(tBuffer);
                     //if (tRead < 0)
