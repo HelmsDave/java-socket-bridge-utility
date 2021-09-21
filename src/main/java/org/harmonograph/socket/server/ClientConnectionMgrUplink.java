@@ -14,14 +14,17 @@ public class ClientConnectionMgrUplink implements Runnable {
     protected final Socket _socket;
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
+    protected final int _bufferSize;
 
     public ClientConnectionMgrUplink(
             final Socket aSocket,
             final LinkedBlockingQueue<String> aQueue,
-            final boolean aVerbose) {
+            final boolean aVerbose,
+            final int aBufferSize) {
         _socket = aSocket;
         _queue = aQueue;
         _verbose = aVerbose;
+        _bufferSize = aBufferSize;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class ClientConnectionMgrUplink implements Runnable {
 
         try (final InputStream tInputStream = _socket.getInputStream();
                 final InputStreamReader tReader = new InputStreamReader(tInputStream);
-                final BufferedReader tBufReader = new BufferedReader(tReader, Utility.kBufferSize)) {
+                final BufferedReader tBufReader = new BufferedReader(tReader, _bufferSize)) {
 
             System.out.print(String.format(
                     "Uplink Connected from %s %d%n",

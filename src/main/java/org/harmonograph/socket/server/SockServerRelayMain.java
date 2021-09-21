@@ -15,6 +15,7 @@ public final class SockServerRelayMain {
         short tUplinkPort = 30004;
         short tDownlinkPort = 30003;
         boolean tVerbose = false;
+        int tBufferSize = 4*1024;
 
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
@@ -31,11 +32,16 @@ public final class SockServerRelayMain {
                 case "-verbose":
                     tVerbose = true;
                     break;
+                case "-bufferSize":
+                    final String tBufferSizeString = aArgs[++tIndex];
+                    tBufferSize = Integer.parseInt(tBufferSizeString);
+                    break;                        
             }
         }
         
         final SockServerRelay tServer
-                = new SockServerRelay(tUplinkPort, tDownlinkPort, tVerbose);
+                = new SockServerRelay(tUplinkPort, tDownlinkPort,
+                        tVerbose, tBufferSize);
         tServer.start();
     }
     

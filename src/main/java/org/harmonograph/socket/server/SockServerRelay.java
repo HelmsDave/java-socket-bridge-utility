@@ -17,14 +17,15 @@ public class SockServerRelay {
     public SockServerRelay(
             final short aUplinkPort,
             final short aDownlinkPort,
-            final boolean aVerbose)
+            final boolean aVerbose,
+            final int aBufferSize)
     {
         _queue = new LinkedBlockingQueue<>();
         _uplinkServer = new ServerConnectionMgrUplink(
-                aUplinkPort, aVerbose, _queue);
+                aUplinkPort, aVerbose, aBufferSize, _queue);
         
         _downlinkServer = new ServerConnectionMgrDownlink(
-                aDownlinkPort, aVerbose, _queue);
+                aDownlinkPort, aVerbose, aBufferSize, _queue);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",

@@ -21,6 +21,7 @@ public final class SockClientRelayMain {
         String tPushHost = "";
         short tPushPort = 30004;
         boolean tVerbose = false;
+        int tBufferSize = 4*1024;
         
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
@@ -43,10 +44,15 @@ public final class SockClientRelayMain {
                 case "-verbose":
                     tVerbose = true;
                     break;
+                case "-bufferSize":
+                    final String tBufferSizeString = aArgs[++tIndex];
+                    tBufferSize = Integer.parseInt(tBufferSizeString);
+                    break;    
             }
         }
         final SockClientRelay tApp = new SockClientRelay(
-                tPullHost, tPullPort, tPushHost, tPushPort, tVerbose);
+                tPullHost, tPullPort, tPushHost, tPushPort,
+                tVerbose, tBufferSize);
         tApp.run();        
     }
     

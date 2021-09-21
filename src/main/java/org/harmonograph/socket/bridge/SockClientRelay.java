@@ -24,6 +24,7 @@ public class SockClientRelay implements Runnable {
     protected final String _pushHost;
     protected final short _pushPort;
     protected final boolean _verbose;
+    protected final int _bufferSize;
     
     protected long _reportTimeLast;
     protected int _reportLines;
@@ -32,17 +33,18 @@ public class SockClientRelay implements Runnable {
     public SockClientRelay(
             final String aPullHost, final short aPullPort,
             final String aPushHost, final short aPushPort,
-            final boolean aVerbose)
+            final boolean aVerbose, final int aBufferSize)
     {
         _pullHost = aPullHost;
         _pullPort = aPullPort;
         _pushHost = aPushHost;
         _pushPort = aPushPort;
         _verbose = aVerbose;
+        _bufferSize = aBufferSize;
         
         System.out.print(String.format(
-                "SockClientRelay, pull %s %d, push %s %d, verbose %b%n",
-                _pullHost, _pullPort, _pushHost, _pushPort, _verbose));
+                "SockClientRelay, pull %s %d, push %s %d, verbose %b, buffer %d%n",
+                _pullHost, _pullPort, _pushHost, _pushPort, _verbose, _bufferSize));
     }
 
     @Override
@@ -61,13 +63,13 @@ public class SockClientRelay implements Runnable {
         try (final Socket tPullSock = new Socket(_pullHost, _pullPort);
              final InputStream tPullInputStream = tPullSock.getInputStream();
              final InputStreamReader tPullReader = new InputStreamReader(tPullInputStream);
-             final BufferedReader tPullBufReader = new BufferedReader(tPullReader, Utility.kBufferSize)) {
+             final BufferedReader tPullBufReader = new BufferedReader(tPullReader, _bufferSize)) {
 
             System.out.print(String.format("Connecting to push server %s:%d%n", _pushHost, _pushPort));
             try (final Socket tPushSock = new Socket(_pushHost, _pushPort);
                  final OutputStream tPushOutputStream = tPushSock.getOutputStream();
                  final OutputStreamWriter tPushWriter = new OutputStreamWriter(tPushOutputStream);
-                 final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter, Utility.kBufferSize)) {
+                 final BufferedWriter tPushBufWriter = new BufferedWriter(tPushWriter, _bufferSize)) {
                 
                 System.out.print(String.format("Connected%n"));
                 while (true) {

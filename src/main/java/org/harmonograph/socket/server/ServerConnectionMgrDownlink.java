@@ -14,7 +14,8 @@ public class ServerConnectionMgrDownlink {
 
     protected final short _port;
     protected final boolean _verbose;
-
+    protected final int _bufferSize;
+    
     protected final LinkedBlockingQueue<String> _queue;
 
     protected final List<ClientConnectionMgrDownlink> _downlinks;
@@ -29,9 +30,11 @@ public class ServerConnectionMgrDownlink {
     public ServerConnectionMgrDownlink(
             final short aPort,
             final boolean aVerbose,
+            final int aBufferSize,
             final LinkedBlockingQueue<String> aQueue) {
         _port = aPort;
         _verbose = aVerbose;
+        _bufferSize = aBufferSize;
         _queue = aQueue;
         _downlinks = new CopyOnWriteArrayList<>();
 
@@ -49,7 +52,7 @@ public class ServerConnectionMgrDownlink {
                     + tClient.getPort();
 
             final ClientConnectionMgrDownlink tHandler
-                    = new ClientConnectionMgrDownlink(tClient, _verbose);
+                    = new ClientConnectionMgrDownlink(tClient, _verbose, _bufferSize);
             _downlinks.add(tHandler);
 
             final Thread tServiceThread = new Thread(tHandler, tConnectionName);

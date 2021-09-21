@@ -14,14 +14,17 @@ public class ClientConnectionMgrDownlink implements Runnable {
     protected final Socket _socket;
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
+    protected final int _bufferSize;
     protected boolean _connected;
 
     public ClientConnectionMgrDownlink(
             final Socket aSocket,
-            final boolean aVerbose) {
+            final boolean aVerbose,
+            final int aBufferSize) {
         _socket = aSocket;
         _queue = new LinkedBlockingQueue<>();
         _verbose = aVerbose;
+        _bufferSize = aBufferSize;
         _connected = true;
     }
     
@@ -40,7 +43,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
 
         try (final OutputStream tOutputStream = _socket.getOutputStream();
                 final OutputStreamWriter tWriter = new OutputStreamWriter(tOutputStream);
-                final BufferedWriter tBufWriter = new BufferedWriter(tWriter, Utility.kBufferSize)) {
+                final BufferedWriter tBufWriter = new BufferedWriter(tWriter, _bufferSize)) {
 
             System.out.print(String.format("Downlink Connected from %s %d%n",
                     _socket.getInetAddress().getCanonicalHostName(),
