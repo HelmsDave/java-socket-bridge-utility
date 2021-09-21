@@ -87,7 +87,7 @@ public class ServerConnectionMgrDownlink {
                         _reportChars += tLine.length();
                         if (System.currentTimeMillis() - _reportTimeLast > Utility.kSleepTimeMillis) {
                             System.out.print(String.format(
-                                    "Received %,d lines, %,d k chars, %d listeners%n",
+                                    "Received %,d lines, %,dk chars, %d listeners%n",
                                     _reportLines, _reportChars / 1024, _downlinks.size()));
                             _reportLines = 0;
                             _reportChars = 0;

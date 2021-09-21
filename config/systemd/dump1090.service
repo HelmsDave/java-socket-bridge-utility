@@ -1,0 +1,10 @@
+[Unit]
+Description=dump1090
+After=network.target rc-local.service
+[Service]
+Restart=always
+RestartSec=10s
+User=pi
+ExecStart=/home/pi/dump1090/dump1090 "--quiet" "--net"
+[Install]
+WantedBy=multi-user.target

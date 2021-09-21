@@ -86,7 +86,7 @@ public class SockClientRelay implements Runnable {
                         if (System.currentTimeMillis() - _reportTimeLast > Utility.kSleepTimeMillis)
                         {
                             System.out.print(String.format(
-                                    "Sent %,d lines, %,d k chars%n",
+                                    "Sent %,d lines, %,dk chars%n",
                                     _reportLines, _reportChars/1024));
                             _reportLines = 0;
                             _reportChars = 0;

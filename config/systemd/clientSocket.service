@@ -1,0 +1,10 @@
+[Unit]
+Description=ADS Socket Client
+After=network.target rc-local.service
+[Service]
+Restart=always
+RestartSec=10s
+User=pi
+ExecStart=/home/pi/java-socket-bridge-utility/scripts/run_client.sh
+[Install]
+WantedBy=multi-user.target
