@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.harmonograph.socket.util.Utility;
 
 /** Connection manager for single client connection, uplink mode. */
 public class ClientConnectionMgrUplink implements Runnable {
@@ -15,18 +14,48 @@ public class ClientConnectionMgrUplink implements Runnable {
     protected final LinkedBlockingQueue<String> _queue;
     protected final boolean _verbose;
     protected final int _bufferSize;
+    protected final String _connectionName;
+    protected final Thread _thread;
 
+    /**
+     * Simple constructor.
+     * @param aSocket Client socket
+     * @param aQueue Message queue
+     * @param aVerbose Verbose control
+     * @param aBufferSize Buffer size in chars
+     * @param aConnectionName Name of this socket connection
+     */
     public ClientConnectionMgrUplink(
             final Socket aSocket,
             final LinkedBlockingQueue<String> aQueue,
             final boolean aVerbose,
-            final int aBufferSize) {
+            final int aBufferSize,
+            final String aConnectionName) {
         _socket = aSocket;
         _queue = aQueue;
         _verbose = aVerbose;
         _bufferSize = aBufferSize;
+        _connectionName = aConnectionName;
+        _thread = new Thread(this, aConnectionName);
+    }
+    
+    /** Start worker. */
+    public void start()
+    {
+        _thread.start();
     }
 
+
+    /** 
+     * Get human readable connection name.
+     * 
+     * @return Connection name 
+     */
+    public String getConnectionName()
+    {
+        return _connectionName;
+    }    
+    
     @Override
     public void run() {
 

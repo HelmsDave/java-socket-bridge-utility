@@ -5,6 +5,7 @@ package org.harmonograph.socket.server;
 /**
  * Socket server relay application.
  * This pulls from port and pushes to another.
+ * Supports multiple push connections and multiple pull connections.
  */
 public final class SockServerRelayMain {
    
@@ -35,7 +36,11 @@ public final class SockServerRelayMain {
                 case "-bufferSize":
                     final String tBufferSizeString = aArgs[++tIndex];
                     tBufferSize = Integer.parseInt(tBufferSizeString);
-                    break;                        
+                    break;
+                default:
+                    System.out.println(String.format(
+                            "unknown arg %s", aArgs[tIndex]));
+                    break;                    
             }
         }
         

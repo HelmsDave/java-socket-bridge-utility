@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.harmonograph.socket.util.Utility;
 
 /**
- * Connection manager for single server connection, downlink.
+ * Connection manager for down-link server, creates client connections.
  */
 public class ServerConnectionMgrDownlink {
 
@@ -27,6 +27,13 @@ public class ServerConnectionMgrDownlink {
     protected int _reportLines;
     protected int _reportChars;
 
+    /**
+     * Simple constructor.
+     * @param aPort Downlink port number
+     * @param aVerbose Verbose control
+     * @param aBufferSize Buffer size in chars
+     * @param aQueue Main message queue
+     */
     public ServerConnectionMgrDownlink(
             final short aPort,
             final boolean aVerbose,
@@ -42,6 +49,7 @@ public class ServerConnectionMgrDownlink {
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");
     }
 
+    /** Serve connections on server socket. */
     public void serve() {
         try (final ServerSocket tPullServerSocket = new ServerSocket(_port)) {
 
@@ -52,11 +60,10 @@ public class ServerConnectionMgrDownlink {
                     + tClient.getPort();
 
             final ClientConnectionMgrDownlink tHandler
-                    = new ClientConnectionMgrDownlink(tClient, _verbose, _bufferSize);
+                    = new ClientConnectionMgrDownlink(
+                            tClient, _verbose, _bufferSize, tConnectionName);
             _downlinks.add(tHandler);
-
-            final Thread tServiceThread = new Thread(tHandler, tConnectionName);
-            tServiceThread.start();
+            tHandler.start();
         } catch (final Exception tEx) {
 
         }
@@ -67,8 +74,13 @@ public class ServerConnectionMgrDownlink {
         _threadServerListener.start();
     }
 
+    /** 
+     * Thread to listen to main queue for messages and distribute
+     * a copy to each download client.
+     */
     class QueueWorker implements Runnable {
 
+        @Override
         public void run() {
             while (true) {
                 try {
@@ -79,6 +91,23 @@ public class ServerConnectionMgrDownlink {
                     }
                     for (final ClientConnectionMgrDownlink tDown : _downlinks) {
                         if (!tDown.isConnected()) {
+                            _downlinks.remove(tDown);
+                            continue;
+                        }
+                        
+                        final int tBacklog = tDown.getQueue().size();
+                        if (tBacklog > Utility.kBacklogMessagesWarning)
+                        {
+                            System.out.println(String.format(
+                                    "Backlog on client %s, %d messages", 
+                                    tDown.getConnectionName(), tBacklog));
+                        }
+                        if (tBacklog > Utility.kBacklogMessagesMax)
+                        {
+                            System.out.println(String.format(
+                                    "Removing client %s",
+                                    tDown.getConnectionName()));                            
+                            // todo interrupt and cleanup
                             _downlinks.remove(tDown);
                             continue;
                         }
@@ -105,8 +134,10 @@ public class ServerConnectionMgrDownlink {
         }
     }
 
+    /** Thread to listen for client connections. */
     class ServerListener implements Runnable {
 
+        @Override
         public void run() {
             while (true) {
                 serve();

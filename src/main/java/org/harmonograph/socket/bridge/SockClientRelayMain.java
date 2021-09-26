@@ -47,7 +47,11 @@ public final class SockClientRelayMain {
                 case "-bufferSize":
                     final String tBufferSizeString = aArgs[++tIndex];
                     tBufferSize = Integer.parseInt(tBufferSizeString);
-                    break;    
+                    break;
+                default:
+                    System.out.println(String.format(
+                            "unknown arg %s", aArgs[tIndex]));
+                    break;
             }
         }
         final SockClientRelay tApp = new SockClientRelay(

@@ -57,6 +57,13 @@ public class SockClientRelay implements Runnable {
         }
         
     }
+    
+    /** 
+     * This method tries to make a socket connection to both the source data
+     * socket server (pull) and the destination data socket server (push).
+     * If the connection is made, then this class will read messages from the
+     * source (lines) and push them to the destination.
+     */
     public void connect()
     {
         System.out.print(String.format("Connecting to pull server %s:%d%n", _pullHost, _pullPort));

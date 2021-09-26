@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.harmonograph.socket.util.Utility;
 
 /**
- * Connection manager for single server connection, uplink.
+ * Connection manager for up-link server, creates client connections.
  */
 public class ServerConnectionMgrUplink {
 
@@ -31,6 +31,7 @@ public class ServerConnectionMgrUplink {
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");
     }
 
+    /** Serve connections on server socket. */
     public void serve() {
         try (final ServerSocket tPullServerSocket = new ServerSocket(_port)) {
 
@@ -41,10 +42,9 @@ public class ServerConnectionMgrUplink {
                     + tClient.getPort();
 
             final ClientConnectionMgrUplink tHandler
-                    = new ClientConnectionMgrUplink(tClient, _queue, _verbose, _bufferSize);
-
-            final Thread tServiceThread = new Thread(tHandler, tConnectionName);
-            tServiceThread.start();
+                    = new ClientConnectionMgrUplink(
+                            tClient, _queue, _verbose, _bufferSize, tConnectionName);
+            tHandler.start();
         } catch (final Exception tEx) {
 
         }
@@ -54,6 +54,7 @@ public class ServerConnectionMgrUplink {
         _threadServerListener.start();
     }
 
+    /** Thread to listen for client connections */
     class ServerListener implements Runnable {
 
         public void run() {

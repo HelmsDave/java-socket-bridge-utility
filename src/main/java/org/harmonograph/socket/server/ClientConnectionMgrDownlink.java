@@ -6,9 +6,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.harmonograph.socket.util.Utility;
 
-/** Connection manager for single client connection, downlink mode. */
+/** Connection manager for single client connection, down-link mode. */
 public class ClientConnectionMgrDownlink implements Runnable {
 
     protected final Socket _socket;
@@ -16,17 +15,54 @@ public class ClientConnectionMgrDownlink implements Runnable {
     protected final boolean _verbose;
     protected final int _bufferSize;
     protected boolean _connected;
+    protected final String _connectionName;
+    protected final Thread _thread;
+    protected volatile boolean _done;
 
+    /**
+     * Simple constructor.
+     * @param aSocket Client socket
+     * @param aVerbose Verbose control
+     * @param aBufferSize Buffer size in chars
+     * @param aConnectionName Name of this socket connection
+     */
     public ClientConnectionMgrDownlink(
             final Socket aSocket,
             final boolean aVerbose,
-            final int aBufferSize) {
+            final int aBufferSize,
+            final String aConnectionName) {
         _socket = aSocket;
         _queue = new LinkedBlockingQueue<>();
         _verbose = aVerbose;
         _bufferSize = aBufferSize;
         _connected = true;
+        _connectionName = aConnectionName;
+        _thread = new Thread(this, aConnectionName);
+        _done = false;
     }
+    
+    /** Start worker. */
+    public void start()
+    {
+        _thread.start();
+    }
+
+    public void halt()
+    {
+        _done = true;
+        _thread.interrupt();
+    }
+    
+    /** 
+     * Get human readable connection name.
+     * 
+     * @return Connection name 
+     */
+    public String getConnectionName()
+    {
+        return _connectionName;
+    }
+    
     
     public LinkedBlockingQueue<String> getQueue()
     {
@@ -48,7 +84,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
             System.out.print(String.format("Downlink Connected from %s %d%n",
                     _socket.getInetAddress().getCanonicalHostName(),
                     _socket.getPort()));
-            while (true) {
+            while (!_done) {
                 final String tLine = _queue.take();
                 if (tLine == null) {
                     _connected = false;
@@ -58,7 +94,10 @@ public class ClientConnectionMgrDownlink implements Runnable {
                 tBufWriter.newLine();
             }
         } catch (InterruptedException ex) {
-            System.out.println("Queue error: " + ex.getMessage());
+            if (!_done)
+            {
+                System.out.println("Queue error: " + ex.getMessage());
+            } 
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
         }
