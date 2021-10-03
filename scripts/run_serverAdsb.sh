@@ -1,6 +1,6 @@
 #!/bin/bash
 
-java -cp /home/pi/java-socket-bridge-utility/target/java-socket-bridge-utility-1.0-SNAPSHOT.jar \
+java -cp /home/ec2-user/java-socket-bridge-utility/target/java-socket-bridge-utility-1.0-SNAPSHOT.jar \
    org.harmonograph.socket.server.SockServerRelayMain \
    -uplinkPort 30004 \
    -downlinkPort 30003 \
