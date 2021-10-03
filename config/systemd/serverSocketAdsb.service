@@ -1,0 +1,10 @@
+[Unit]
+Description=ADS Socket Server ADSB
+After=network.target rc-local.service
+[Service]
+Restart=always
+RestartSec=10s
+User=ec2-user
+ExecStart=/home/pi/java-socket-bridge-utility/scripts/run_serverAdsb.sh
+[Install]
+WantedBy=multi-user.target
