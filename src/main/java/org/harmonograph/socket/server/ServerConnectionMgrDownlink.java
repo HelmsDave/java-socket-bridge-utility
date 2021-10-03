@@ -107,7 +107,7 @@ public class ServerConnectionMgrDownlink {
                             System.out.println(String.format(
                                     "Removing client %s",
                                     tDown.getConnectionName()));                            
-                            // todo interrupt and cleanup
+                            tDown.halt();
                             _downlinks.remove(tDown);
                             continue;
                         }
