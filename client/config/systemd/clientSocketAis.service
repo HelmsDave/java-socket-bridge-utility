@@ -5,6 +5,6 @@ After=network.target rc-local.service
 Restart=always
 RestartSec=10s
 User=pi
-ExecStart=/home/pi/java-socket-bridge-utility/scripts/run_clientAis.sh
+ExecStart=/home/pi/java-socket-bridge-utility/client/scripts/run_clientAis.sh
 [Install]
 WantedBy=multi-user.target

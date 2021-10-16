@@ -1,10 +1,10 @@
 [Unit]
-Description=ADS Socket Server ADSB
+Description=ADS Socket Server AIS
 After=network.target rc-local.service
 [Service]
 Restart=always
 RestartSec=10s
 User=ec2-user
-ExecStart=/home/ec2-user/java-socket-bridge-utility/scripts/run_serverAdsb.sh
+ExecStart=/home/ec2-user/java-socket-bridge-utility/server/scripts/run_serverAis.sh
 [Install]
 WantedBy=multi-user.target
