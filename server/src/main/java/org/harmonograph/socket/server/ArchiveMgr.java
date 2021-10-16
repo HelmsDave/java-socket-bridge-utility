@@ -18,13 +18,17 @@ import org.harmonograph.socket.util.Utility;
  */
 public class ArchiveMgr implements Runnable {
     
-    final String _connectionName;
+    protected final String _connectionName;
     
-    final SimpleDateFormat _dateFormat;
+    protected final SimpleDateFormat _dateFormat;
+    
+    protected long _lastFlush; 
     
     protected final LinkedBlockingQueue<String> _queue;
     protected final Thread _thread;
     protected volatile boolean _done;
+    
+    protected static final long kFlushPeriodSeconds = 10;
     
     /** 
      * Simple constructor.
@@ -39,7 +43,6 @@ public class ArchiveMgr implements Runnable {
         
         _dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH");
         _dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            
     }
     
     /** 
@@ -68,6 +71,7 @@ public class ArchiveMgr implements Runnable {
     @Override
     public void run() {
 
+        // Loop to name and write output files
         files: while (true)
         {
             // Avoid opening file, if we never get data on socket
@@ -75,6 +79,7 @@ public class ArchiveMgr implements Runnable {
                 Utility.pause();
             }            
             
+            // Figure filename an open file for write
             final String tDateString = _dateFormat.format(new Date());
             final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
             final File tFile = new File(tFilename);
@@ -82,7 +87,10 @@ public class ArchiveMgr implements Runnable {
             try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
                  OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);
                  BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
+                
+                _lastFlush = System.currentTimeMillis();
 
+                // Write messages to file
                 messages: while (!_done) {
                     final String tLine = _queue.take();
                     if (tLine == null) {
@@ -94,6 +102,7 @@ public class ArchiveMgr implements Runnable {
                         continue;
                     }
                     
+                    // Check free space before write
                     final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
                     if (tFreeSpaceMeg < 1024) {
                         System.out.println(String.format(
@@ -102,9 +111,18 @@ public class ArchiveMgr implements Runnable {
                         continue;
                     }                    
                     
+                    // Write proper
                     tBufWriter.write(tLine);
                     tBufWriter.newLine();
                     
+                    // Time=based flush
+                    final long tCurrentTime = System.currentTimeMillis();
+                    if ((tCurrentTime - _lastFlush) > kFlushPeriodSeconds) {
+                        tBufWriter.flush();
+                        _lastFlush = tCurrentTime;
+                    }
+                    
+                    // Check if it's time to open another file
                     final String tDateStringNew = _dateFormat.format(new Date());
                     if (!tDateStringNew.equals(tDateString))
                     {
