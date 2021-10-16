@@ -69,7 +69,7 @@ public class ArchiveMgr implements Runnable {
         files: while (true)
         {
             tDateString = _dateFormat.format(new Date());
-            final String tFilename = tDateString + "_" + _connectionName + ".dat";
+            final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
             final File tFile = new File(tFilename);
             
             try (final FileWriter tFileWriter = new FileWriter(tFile, true);
