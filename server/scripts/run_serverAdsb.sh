@@ -4,5 +4,5 @@ java -cp /home/ec2-user/java-socket-bridge-utility/server/target/java-socket-ser
    org.harmonograph.socket.server.SockServerRelayMain \
    -uplinkPort 30004 \
    -downlinkPort 30003 \
-   -name ADSB \
+   -name ADSB_Dallas \
    -verbose

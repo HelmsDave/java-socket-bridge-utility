@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.harmonograph.socket.util.Utility;
 
 /**
  * Manage output to storage.
@@ -67,14 +68,25 @@ public class ArchiveMgr implements Runnable {
     @Override
     public void run() {
 
-        String tDateString;
         files: while (true)
         {
-            tDateString = _dateFormat.format(new Date());
+            // Avoid opening file, if we never get data on socket
+            while (_queue.isEmpty()) {
+                Utility.pause();
+            }            
+            
+            final String tDateString = _dateFormat.format(new Date());
             final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
             final File tFile = new File(tFilename);
             
-            
+            final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
+            if (tFreeSpaceMeg < 1024) {
+                System.out.println(String.format(
+                        "Disk out of space, %d meg free", tFreeSpaceMeg));
+                Utility.pause();
+                continue;
+            }
+  
             try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
                  OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);
                  BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
@@ -82,7 +94,8 @@ public class ArchiveMgr implements Runnable {
                 messages: while (!_done) {
                     final String tLine = _queue.take();
                     if (tLine == null) {
-                        return;
+                        System.out.println(String.format("Null line"));
+                        continue;
                     }
                     if (_done)
                     {
@@ -109,6 +122,7 @@ public class ArchiveMgr implements Runnable {
                 } 
             } catch (final IOException ex) {
                 System.out.println("I/O error: " + ex.getMessage());
+                Utility.pause();
             } 
         }
         

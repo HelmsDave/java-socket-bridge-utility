@@ -4,6 +4,6 @@ java -cp /home/ec2-user/java-socket-bridge-utility/server/target/java-socket-ser
    org.harmonograph.socket.server.SockServerRelayMain \
    -uplinkPort 30019 \
    -downlinkPort 30018 \
-   -name AIS2 \
+   -name AIS_Columbia \
    -verbose
    
