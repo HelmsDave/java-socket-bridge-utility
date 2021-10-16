@@ -12,6 +12,8 @@ public class SockServerRelay {
     protected final ServerConnectionMgrUplink _uplinkServer;
     /** Server for down-link connections. */
     protected final ServerConnectionMgrDownlink _downlinkServer;
+    /** Data archive manager. */
+    protected final ArchiveMgr _archiveMgr;
     /** Queue of messages between up-link and down-link, merged. */
     protected final LinkedBlockingQueue<String> _queue;    
     
@@ -20,20 +22,24 @@ public class SockServerRelay {
      * @param aUplinkPort Uplink server port
      * @param aDownlinkPort Downlink server port
      * @param aVerbose Verbose control
-     * @param aBufferSize Bufer size in chars
+     * @param aBufferSize Buffer size in chars
+     * @param aName Connection Name
      */
     public SockServerRelay(
             final short aUplinkPort,
             final short aDownlinkPort,
             final boolean aVerbose,
-            final int aBufferSize)
+            final int aBufferSize,
+            final String aName)
     {
         _queue = new LinkedBlockingQueue<>();
         _uplinkServer = new ServerConnectionMgrUplink(
                 aUplinkPort, aVerbose, aBufferSize, _queue);
         
+        _archiveMgr = new ArchiveMgr(aName);        
+        
         _downlinkServer = new ServerConnectionMgrDownlink(
-                aDownlinkPort, aVerbose, aBufferSize, _queue);
+                aDownlinkPort, aVerbose, aBufferSize, _queue, _archiveMgr);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",
@@ -44,6 +50,7 @@ public class SockServerRelay {
     {
         _uplinkServer.start();
         _downlinkServer.start();
+        _archiveMgr.start();
     }
   
 }

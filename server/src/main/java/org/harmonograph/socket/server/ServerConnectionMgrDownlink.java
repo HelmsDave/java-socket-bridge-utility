@@ -19,6 +19,8 @@ public class ServerConnectionMgrDownlink {
     protected final LinkedBlockingQueue<String> _queue;
 
     protected final List<ClientConnectionMgrDownlink> _downlinks;
+    
+    protected final ArchiveMgr _archiveMgr;
 
     protected final Thread _threadQueueWorker;
     protected final Thread _threadServerListener;
@@ -33,17 +35,20 @@ public class ServerConnectionMgrDownlink {
      * @param aVerbose Verbose control
      * @param aBufferSize Buffer size in chars
      * @param aQueue Main message queue
+     * @param aArchiveMgr Archive Manager
      */
     public ServerConnectionMgrDownlink(
             final short aPort,
             final boolean aVerbose,
             final int aBufferSize,
-            final LinkedBlockingQueue<String> aQueue) {
+            final LinkedBlockingQueue<String> aQueue,
+            final ArchiveMgr aArchiveMgr) {
         _port = aPort;
         _verbose = aVerbose;
         _bufferSize = aBufferSize;
         _queue = aQueue;
         _downlinks = new CopyOnWriteArrayList<>();
+        _archiveMgr = aArchiveMgr;
 
         _threadQueueWorker = new Thread(new QueueWorker(), "Queue worker");
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");
@@ -87,7 +92,7 @@ public class ServerConnectionMgrDownlink {
                     final String tLine = _queue.take();
                     if (tLine == null) {
                         Utility.pause();
-                        return;
+                        continue;
                     }
                     for (final ClientConnectionMgrDownlink tDown : _downlinks) {
                         if (!tDown.isConnected()) {
@@ -114,6 +119,9 @@ public class ServerConnectionMgrDownlink {
 
                         tDown.getQueue().put(tLine);
                     }
+                    
+                    _archiveMgr.getQueue().put(tLine);
+                    
                     if (_verbose) {
                         ++_reportLines;
                         _reportChars += tLine.length();

@@ -17,6 +17,7 @@ public final class SockServerRelayMain {
         short tDownlinkPort = 30003;
         boolean tVerbose = false;
         int tBufferSize = 4*1024;
+        String tName = "";
 
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
@@ -37,6 +38,9 @@ public final class SockServerRelayMain {
                     final String tBufferSizeString = aArgs[++tIndex];
                     tBufferSize = Integer.parseInt(tBufferSizeString);
                     break;
+                case "-name":
+                    tName = aArgs[++tIndex];
+                    break;                    
                 default:
                     System.out.println(String.format(
                             "unknown arg %s", aArgs[tIndex]));
@@ -46,7 +50,7 @@ public final class SockServerRelayMain {
         
         final SockServerRelay tServer
                 = new SockServerRelay(tUplinkPort, tDownlinkPort,
-                        tVerbose, tBufferSize);
+                        tVerbose, tBufferSize, tName);
         tServer.start();
     }
     
