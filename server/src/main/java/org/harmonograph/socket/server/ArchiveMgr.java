@@ -78,15 +78,7 @@ public class ArchiveMgr implements Runnable {
             final String tDateString = _dateFormat.format(new Date());
             final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
             final File tFile = new File(tFilename);
-            
-            final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
-            if (tFreeSpaceMeg < 1024) {
-                System.out.println(String.format(
-                        "Disk out of space, %d meg free", tFreeSpaceMeg));
-                Utility.pause();
-                continue;
-            }
-  
+              
             try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
                  OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);
                  BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
@@ -101,6 +93,14 @@ public class ArchiveMgr implements Runnable {
                     {
                         continue;
                     }
+                    
+                    final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
+                    if (tFreeSpaceMeg < 1024) {
+                        System.out.println(String.format(
+                                "Disk out of space, %d meg free", tFreeSpaceMeg));
+                        Utility.pause();
+                        continue;
+                    }                    
                     
                     tBufWriter.write(tLine);
                     tBufWriter.newLine();
