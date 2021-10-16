@@ -3,8 +3,10 @@ package org.harmonograph.socket.server;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -72,8 +74,10 @@ public class ArchiveMgr implements Runnable {
             final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
             final File tFile = new File(tFilename);
             
-            try (final FileWriter tFileWriter = new FileWriter(tFile, true);
-                 final BufferedWriter tBufWriter = new BufferedWriter(tFileWriter)) {
+            
+            try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
+                 OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);
+                 BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
 
                 messages: while (!_done) {
                     final String tLine = _queue.take();
@@ -93,7 +97,8 @@ public class ArchiveMgr implements Runnable {
                     {
                         tBufWriter.flush();
                         tBufWriter.close();
-                        tFileWriter.close();
+                        tWriter.close();
+                        tFileStream.close();
                         continue files;
                     }
                 }
