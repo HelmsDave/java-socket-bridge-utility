@@ -30,7 +30,7 @@ public class ArchiveMgrS3 implements Runnable {
         _done = false;       
         
         _s3 = AmazonS3ClientBuilder.standard()
-                .withRegion(Regions.DEFAULT_REGION).build();
+                .withRegion(Regions.US_EAST_1).build();
     }
 
     public LinkedBlockingQueue<File> getQueue() {
