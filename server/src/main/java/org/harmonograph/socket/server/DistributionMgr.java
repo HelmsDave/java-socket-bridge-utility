@@ -115,7 +115,7 @@ public class DistributionMgr implements Runnable {
                     if (_verbose) {
                         ++_reportLines;
                         _reportChars += tLine.length();
-                        if (System.currentTimeMillis() - _reportTimeLast > Utility.kSleepTimeMillis) {
+                        if (System.currentTimeMillis() - _reportTimeLast > Utility.kLogTimeMillis) {
                             System.out.print(String.format(
                                     "Received %,d lines, %,dk chars, %d listeners%n",
                                     _reportLines, _reportChars / 1024, _downlinks.size()));

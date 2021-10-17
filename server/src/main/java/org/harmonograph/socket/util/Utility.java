@@ -13,4 +13,7 @@ public final class Utility {
     /** General sleep time in milliseconds. */
     public static final int kSleepTimeMillis = 10*1000;
     
+    /** General log period in milliseconds. */
+    public static final int kLogTimeMillis = 60*1000;    
+    
 }
