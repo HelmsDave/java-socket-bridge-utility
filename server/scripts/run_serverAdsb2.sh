@@ -5,4 +5,4 @@ java -cp /home/ec2-user/java-socket-bridge-utility/server/target/java-socket-ser
    -uplinkPort 30014 \
    -downlinkPort 30013 \
    -name ADSB_Columbia \
-   -verbose
+   -verbose -archive

@@ -8,10 +8,11 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /** Connection manager for single client connection, down-link mode. */
-public class ClientConnectionMgrDownlink implements Runnable {
+public class ClientConnectionMgrDownlink 
+        implements Runnable, DistributionMgrClient {
 
     protected final Socket _socket;
-    protected final LinkedBlockingQueue<String> _queue;
+    protected final LinkedBlockingQueue<String> _queue;  
     protected final boolean _verbose;
     protected final int _bufferSize;
     protected boolean _connected;
@@ -31,6 +32,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
             final boolean aVerbose,
             final int aBufferSize,
             final String aConnectionName) {
+        
         _socket = aSocket;
         _queue = new LinkedBlockingQueue<>();
         _verbose = aVerbose;
@@ -39,6 +41,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
         _connectionName = aConnectionName;
         _thread = new Thread(this, aConnectionName);
         _done = false;
+        
     }
     
     /** Start worker. */

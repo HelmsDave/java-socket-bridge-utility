@@ -5,5 +5,5 @@ java -cp /home/ec2-user/java-socket-bridge-utility/server/target/java-socket-ser
    -uplinkPort 30019 \
    -downlinkPort 30018 \
    -name AIS_Columbia \
-   -verbose
+   -verbose -archive
    

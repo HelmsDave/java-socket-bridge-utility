@@ -5,5 +5,5 @@ java -cp /home/ec2-user/java-socket-bridge-utility/server/target/java-socket-ser
    -uplinkPort 30009 \
    -downlinkPort 30008 \
    -name GPS_Dallas \
-   -verbose
+   -verbose -archive
    

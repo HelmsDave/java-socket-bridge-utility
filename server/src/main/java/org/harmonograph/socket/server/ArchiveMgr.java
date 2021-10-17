@@ -15,7 +15,7 @@ import org.harmonograph.socket.util.Utility;
 /**
  * Manage output to storage.
  */
-public class ArchiveMgr implements Runnable {
+public class ArchiveMgr implements Runnable, DistributionMgrClient {
 
     protected final String _connectionName;
 
@@ -43,12 +43,26 @@ public class ArchiveMgr implements Runnable {
         _dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH");
         _dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
+    
+    @Override
+    public String getConnectionName()
+    {
+        return "Archive Manager";
+    }
+    
+    @Override
+    public boolean isConnected()
+    {
+        return _thread.isAlive();
+    }
+    
 
     /**
      * Get data queue.
      *
      * @return Input data queue
      */
+    @Override
     public LinkedBlockingQueue<String> getQueue() {
         return _queue;
     }
@@ -56,10 +70,12 @@ public class ArchiveMgr implements Runnable {
     /**
      * Start worker.
      */
+    @Override
     public void start() {
         _thread.start();
     }
 
+    @Override
     public void halt() {
         _done = true;
         _thread.interrupt();
@@ -74,6 +90,7 @@ public class ArchiveMgr implements Runnable {
                 // Avoid opening file, if we never get data on socket
                 while (!_done && _queue.isEmpty()) {
                     try {
+                         System.out.println(String.format("Archive pause for data"));
                         Thread.sleep(Utility.kSleepTimeMillis);
                     } catch (final InterruptedException ex2) {
                         if (_done) {
@@ -86,7 +103,8 @@ public class ArchiveMgr implements Runnable {
                 final String tDateString = _dateFormat.format(new Date());
                 final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
                 final File tFile = new File(tFilename);
-                System.out.println(String.format("Open file for write%n%s", tFile.getPath()));
+                System.out.println(String.format(
+                        "Open file for write (exists=%b)%n%s", tFile.exists(), tFile.getPath()));
 
                 try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
                         OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);

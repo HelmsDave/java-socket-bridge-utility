@@ -18,6 +18,7 @@ public final class SockServerRelayMain {
         boolean tVerbose = false;
         int tBufferSize = 4*1024;
         String tName = "";
+        boolean tArchive = false;
 
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
@@ -40,6 +41,9 @@ public final class SockServerRelayMain {
                     break;
                 case "-name":
                     tName = aArgs[++tIndex];
+                    break;
+                case "-archive":
+                    tArchive = true;
                     break;                    
                 default:
                     System.out.println(String.format(
@@ -50,7 +54,7 @@ public final class SockServerRelayMain {
         
         final SockServerRelay tServer
                 = new SockServerRelay(tUplinkPort, tDownlinkPort,
-                        tVerbose, tBufferSize, tName);
+                        tVerbose, tBufferSize, tName, tArchive);
         tServer.start();
     }
     

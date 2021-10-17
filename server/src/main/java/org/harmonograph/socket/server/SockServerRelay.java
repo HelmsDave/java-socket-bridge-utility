@@ -12,6 +12,8 @@ public class SockServerRelay {
     protected final ServerConnectionMgrUplink _uplinkServer;
     /** Server for down-link connections. */
     protected final ServerConnectionMgrDownlink _downlinkServer;
+    /** Message distribution manager. */
+    protected final DistributionMgr _distributionMgr;
     /** Data archive manager. */
     protected final ArchiveMgr _archiveMgr;
     /** Queue of messages between up-link and down-link, merged. */
@@ -24,22 +26,35 @@ public class SockServerRelay {
      * @param aVerbose Verbose control
      * @param aBufferSize Buffer size in chars
      * @param aName Connection Name
+     * @param aArchive Enable archive
      */
     public SockServerRelay(
             final short aUplinkPort,
             final short aDownlinkPort,
             final boolean aVerbose,
             final int aBufferSize,
-            final String aName)
+            final String aName,
+            final boolean aArchive)
     {
         _queue = new LinkedBlockingQueue<>();
         _uplinkServer = new ServerConnectionMgrUplink(
                 aUplinkPort, aVerbose, aBufferSize, _queue);
         
-        _archiveMgr = new ArchiveMgr(aName);        
+        _distributionMgr = new DistributionMgr(
+                aDownlinkPort, aVerbose, aBufferSize, _queue);
         
+        if (aArchive)
+        {
+            _archiveMgr = new ArchiveMgr(aName);
+            _distributionMgr.addListener(_archiveMgr);
+        }
+        else
+        {
+            _archiveMgr = null;
+        }
+
         _downlinkServer = new ServerConnectionMgrDownlink(
-                aDownlinkPort, aVerbose, aBufferSize, _queue, _archiveMgr);
+                aDownlinkPort, aVerbose, aBufferSize, _queue, _distributionMgr);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",
@@ -52,7 +67,7 @@ public class SockServerRelay {
     {
         _uplinkServer.start();
         _downlinkServer.start();
-        _archiveMgr.start();
+        _distributionMgr.start();
     }
     
     public void halt()
@@ -60,7 +75,7 @@ public class SockServerRelay {
         System.out.print(String.format("Halting server"));
         _uplinkServer.halt();
         _downlinkServer.halt();
-        _archiveMgr.halt();
+        _distributionMgr.halt();
     }    
   
 }
