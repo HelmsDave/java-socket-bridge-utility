@@ -72,11 +72,18 @@ public class ArchiveMgr implements Runnable {
     public void run() {
 
         // Loop to name and write output files
-        files: while (true)
+        files: while (!_done)
         {
             // Avoid opening file, if we never get data on socket
-            while (_queue.isEmpty()) {
-                Utility.pause();
+            while (!_done && _queue.isEmpty()) {
+                try {
+                   Thread.sleep(Utility.kSleepTimeMillis);
+                } catch (final InterruptedException ex2) {
+                    if (_done)
+                    {
+                        return;
+                    }                   
+                } 
             }            
             
             // Figure filename an open file for write
@@ -99,7 +106,8 @@ public class ArchiveMgr implements Runnable {
                     }
                     if (_done)
                     {
-                        continue;
+                        tBufWriter.flush();
+                        return;
                     }
                     
                     // Check free space before write
@@ -107,7 +115,14 @@ public class ArchiveMgr implements Runnable {
                     if (tFreeSpaceMeg < 1024) {
                         System.out.println(String.format(
                                 "Disk out of space, %d meg free", tFreeSpaceMeg));
-                        Utility.pause();
+                    try {
+                       Thread.sleep(Utility.kSleepTimeMillis);
+                    } catch (final InterruptedException ex2) {
+                        if (_done)
+                        {
+                            return;
+                        }                   
+                    } 
                         continue;
                     }                    
                     
@@ -134,14 +149,21 @@ public class ArchiveMgr implements Runnable {
                     }
                 }
             } catch (final InterruptedException ex) {
-                if (!_done)
+                if (_done)
                 {
-                    System.out.println("Queue error: " + ex.getMessage());
+                    return;
                 } 
             } catch (final IOException ex) {
                 System.out.println("I/O error: " + ex.getMessage());
-                Utility.pause();
-            } 
+                try {
+                   Thread.sleep(Utility.kSleepTimeMillis);
+                } catch (final InterruptedException ex2) {
+                    if (_done)
+                    {
+                        return;
+                    }                   
+                } 
+            }
         }
         
 

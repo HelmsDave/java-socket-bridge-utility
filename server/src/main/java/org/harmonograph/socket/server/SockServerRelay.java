@@ -44,6 +44,8 @@ public class SockServerRelay {
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",
                 aUplinkPort, aDownlinkPort, aVerbose));        
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> halt(), "shutdown_hook"));
     }
 
     public void start()
@@ -52,5 +54,12 @@ public class SockServerRelay {
         _downlinkServer.start();
         _archiveMgr.start();
     }
+    
+    public void halt()
+    {
+        _uplinkServer.halt();
+        _downlinkServer.halt();
+        _archiveMgr.halt();
+    }    
   
 }

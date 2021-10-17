@@ -28,6 +28,7 @@ public class ServerConnectionMgrDownlink {
     protected long _reportTimeLast;
     protected int _reportLines;
     protected int _reportChars;
+    protected volatile boolean _done;
 
     /**
      * Simple constructor.
@@ -79,6 +80,13 @@ public class ServerConnectionMgrDownlink {
         _threadServerListener.start();
     }
 
+    public void halt()
+    {
+        _done = true;
+        _threadQueueWorker.interrupt();
+        _threadServerListener.interrupt();
+    }    
+    
     /** 
      * Thread to listen to main queue for messages and distribute
      * a copy to each download client.
@@ -87,14 +95,25 @@ public class ServerConnectionMgrDownlink {
 
         @Override
         public void run() {
-            while (true) {
+            while (!_done) {
                 try {
                     final String tLine = _queue.take();
                     if (tLine == null) {
-                        Utility.pause();
+                        try {
+                           Thread.sleep(Utility.kSleepTimeMillis);
+                        } catch (final InterruptedException ex2) {
+                            if (_done)
+                            {
+                                return;
+                            }                   
+                        } 
                         continue;
                     }
                     for (final ClientConnectionMgrDownlink tDown : _downlinks) {
+                        if (_done)
+                        {
+                            return;
+                        }
                         if (!tDown.isConnected()) {
                             _downlinks.remove(tDown);
                             continue;
@@ -136,7 +155,10 @@ public class ServerConnectionMgrDownlink {
                         }
                     }
                 } catch (final InterruptedException tEx) {
-                    Utility.pause();
+                    if (_done)
+                    {
+                        return;
+                    }                   
                 }
             }
         }
@@ -149,7 +171,14 @@ public class ServerConnectionMgrDownlink {
         public void run() {
             while (true) {
                 serve();
-                Utility.pause();
+                try {
+                   Thread.sleep(Utility.kSleepTimeMillis);
+                } catch (final InterruptedException ex2) {
+                    if (_done)
+                    {
+                        return;
+                    }                   
+                } 
             }
         }
     }

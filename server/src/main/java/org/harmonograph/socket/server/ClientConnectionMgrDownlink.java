@@ -92,7 +92,7 @@ public class ClientConnectionMgrDownlink implements Runnable {
                 }
                 if (_done)
                 {
-                    continue;
+                    return;
                 }
                 tBufWriter.write(tLine);
                 tBufWriter.newLine();

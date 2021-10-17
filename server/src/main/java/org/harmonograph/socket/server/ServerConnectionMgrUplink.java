@@ -17,6 +17,7 @@ public class ServerConnectionMgrUplink {
     protected final LinkedBlockingQueue<String> _queue;
 
     protected final Thread _threadServerListener;
+    protected volatile boolean _done;
 
     public ServerConnectionMgrUplink(
             final short aPort,
@@ -53,14 +54,27 @@ public class ServerConnectionMgrUplink {
     public void start() {
         _threadServerListener.start();
     }
+    
+    public void halt()
+    {
+        _done = true;
+        _threadServerListener.interrupt();
+    }       
 
     /** Thread to listen for client connections */
     class ServerListener implements Runnable {
 
         public void run() {
-            while (true) {
+            while (!_done) {
                 serve();
-                Utility.pause();
+                try {
+                   Thread.sleep(Utility.kSleepTimeMillis);
+                } catch (final InterruptedException ex2) {
+                    if (_done)
+                    {
+                        return;
+                    }                   
+                } 
             }
         }
     }

@@ -16,6 +16,7 @@ public class ClientConnectionMgrUplink implements Runnable {
     protected final int _bufferSize;
     protected final String _connectionName;
     protected final Thread _thread;
+    protected volatile boolean _done;
 
     /**
      * Simple constructor.
@@ -45,6 +46,12 @@ public class ClientConnectionMgrUplink implements Runnable {
         _thread.start();
     }
 
+    
+    public void halt()
+    {
+        _done = true;
+        _thread.interrupt();
+    }           
 
     /** 
      * Get human readable connection name.
@@ -67,7 +74,7 @@ public class ClientConnectionMgrUplink implements Runnable {
                     "Uplink Connected from %s %d%n",
                     _socket.getInetAddress().getCanonicalHostName(),
                     _socket.getPort()));            
-            while (true) {
+            while (!_done) {
                 
                 final String tLine = tBufReader.readLine();
                 if (tLine == null) {
