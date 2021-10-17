@@ -77,7 +77,7 @@ public class ArchiveMgrS3 implements Runnable {
             final boolean tRemoved = tZipFile.delete();
             if (!tRemoved) {
                 System.out.println(String.format(
-                        "Error, failed to remove raw%n%s", tRawFile.getPath()));
+                        "Error, failed to remove raw%n%s", tZipFile.getPath()));
             }
 
             final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
