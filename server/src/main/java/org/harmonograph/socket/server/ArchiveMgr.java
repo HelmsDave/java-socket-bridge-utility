@@ -27,7 +27,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
     protected final Thread _thread;
     protected volatile boolean _done;
     
-    protected final ZipManager _zipMgr;
+    protected final ArchiveMgrZip _zipMgr;
 
     protected static final long kFlushPeriodSeconds = 10;
     
@@ -38,7 +38,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
      *
      * @param aConnectionName Connection Name
      */
-    public ArchiveMgr(final String aConnectionName, final ZipManager aZipMgr) {
+    public ArchiveMgr(final String aConnectionName, final ArchiveMgrZip aZipMgr) {
         _connectionName = aConnectionName;
         _queue = new LinkedBlockingQueue<>();
         _thread = new Thread(this, "Archive Manager");

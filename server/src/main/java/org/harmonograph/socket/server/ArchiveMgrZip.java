@@ -1,13 +1,10 @@
 
 package org.harmonograph.socket.server;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -15,21 +12,24 @@ import java.util.zip.ZipOutputStream;
 /**
  * Manage compression of data file into zip file.
  */
-public class ZipManager implements Runnable {
+public class ArchiveMgrZip implements Runnable {
     protected final LinkedBlockingQueue<File> _queue;
     protected final Thread _thread;
     protected volatile boolean _done;    
+    
+    protected final ArchiveMgrS3 _archiveMgrS3;
     
     protected static final String kZipExtension = ".zip";
     
     protected static final int kBufferSize = 64*1024;
     
-    public ZipManager()
+    public ArchiveMgrZip(final ArchiveMgrS3 aArchiveMgrS3)
     {
         _queue = new LinkedBlockingQueue<>();
          _thread = new Thread(this, "Zip Manager");
          _thread.setPriority(Thread.MIN_PRIORITY);
         _done = false;       
+        _archiveMgrS3 = aArchiveMgrS3;
     }
     
     public LinkedBlockingQueue<File> getQueue() {
@@ -96,8 +96,18 @@ public class ZipManager implements Runnable {
             
             final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
             System.out.println(String.format(
-                     "Done compressing %s to %s, %dms",
+                     "Done compressing %s to %s, %,dms",
                     tRawFile.getPath(), tZipFile.getPath(), tDeltaTimeMillis));
+            
+            // todo, remove raw files
+            
+             try {
+                 _archiveMgrS3.getQueue().put(tZipFile);
+             } catch (final InterruptedException ex) {
+                 if (_done) {
+                     return;
+                 }
+             }            
         }
     }
 }
