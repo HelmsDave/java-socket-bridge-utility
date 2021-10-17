@@ -54,7 +54,6 @@ public class SockServerRelay {
         {
             _archiveMgrS3 = new ArchiveMgrS3();
             _archiveMgrZip = new ArchiveMgrZip(_archiveMgrS3);
-            _archiveMgrZip.start();
             _archiveMgr = new ArchiveMgr(aName, _archiveMgrZip);
             _distributionMgr.addListener(_archiveMgr);
             
@@ -82,6 +81,7 @@ public class SockServerRelay {
         _downlinkServer.start();
         _distributionMgr.start();
         _archiveMgrZip.start();
+        _archiveMgrS3.start();
     }
     
     public void halt()
@@ -91,6 +91,7 @@ public class SockServerRelay {
         _downlinkServer.halt();
         _distributionMgr.halt();
         _archiveMgrZip.halt();
+        _archiveMgrS3.halt();
     }    
   
 }

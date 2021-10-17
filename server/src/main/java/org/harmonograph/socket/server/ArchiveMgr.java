@@ -31,9 +31,13 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
 
     protected static final long kFlushPeriodSeconds = 10;
     
-    protected static final String kRawExtension = ".dat";
+    
     
     protected static final String kArchivePath = "/tmp";
+    
+    protected static final String kDateFormat = "yyyy_MM_dd_HH";
+    
+    protected static final String kRawExtension = ".dat";
 
     /**
      * Simple constructor.
@@ -47,7 +51,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
         _done = false;
         _zipMgr = aZipMgr;
 
-        _dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH");
+        _dateFormat = new SimpleDateFormat(kDateFormat);
         _dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
@@ -92,13 +96,16 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
             // Check for orphan files
             for (final File tFile : new File(kArchivePath).listFiles())
             {
-                if (tFile.isFile() && tFile.canRead()
-                        && tFile.getName().endsWith(kRawExtension)
-                        && tFile.getName().contains(_connectionName))
+                if (!tFile.isFile() ||  !tFile.canRead()
+                        || !tFile.getName().endsWith(kRawExtension)
+                        || !tFile.getName().contains(_connectionName)
+                        || tFile.getName().length()
+                            !=  kDateFormat.length() + 1 + _connectionName.length() + kRawExtension.length())
                 {
-                    System.out.println(String.format(
-                            "possible orphan %s", tFile.getName()));
+                    continue;
                 }
+                System.out.println(String.format(
+                            "likely orphan %s", tFile.getName()));
             }
             
             // Loop to name and write output files
