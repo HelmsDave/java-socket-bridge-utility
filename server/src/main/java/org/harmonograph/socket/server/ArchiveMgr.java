@@ -43,19 +43,16 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
         _dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH");
         _dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-    
+
     @Override
-    public String getConnectionName()
-    {
+    public String getConnectionName() {
         return "Archive Manager";
     }
-    
+
     @Override
-    public boolean isConnected()
-    {
+    public boolean isConnected() {
         return _thread.isAlive();
     }
-    
 
     /**
      * Get data queue.
@@ -87,16 +84,16 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
             // Loop to name and write output files
             files:
             while (!_done) {
+
                 // Avoid opening file, if we never get data on socket
-                while (!_done && _queue.isEmpty()) {
-                    try {
-                         System.out.println(String.format("Archive pause for data"));
-                        Thread.sleep(Utility.kSleepTimeMillis);
-                    } catch (final InterruptedException ex2) {
-                        if (_done) {
-                            return;
-                        }
+                String tPendingLine;
+                try {
+                    tPendingLine = _queue.take();
+                } catch (final InterruptedException ex) {
+                    if (_done) {
+                        return;
                     }
+                    continue;
                 }
 
                 // Figure filename an open file for write
@@ -115,51 +112,55 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                     // Write messages to file
                     messages:
                     while (!_done) {
-                        final String tLine = _queue.take();
-                        if (tLine == null) {
-                            System.out.println(String.format("Null line"));
-                            continue;
-                        }
-                        if (_done) {
-                            tBufWriter.flush();
-                            return;
-                        }
+                        try {
 
-                        // Check free space before write
-                        final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
-                        if (tFreeSpaceMeg < 1024) {
-                            System.out.println(String.format(
-                                    "Disk out of space, %d meg free", tFreeSpaceMeg));
-                            try {
-                                Thread.sleep(Utility.kSleepTimeMillis);
-                            } catch (final InterruptedException ex2) {
-                                if (_done) {
-                                    return;
-                                }
+                            if (tPendingLine == null) {
+                                System.out.println(String.format("Null line"));
+                                continue;
                             }
-                            continue;
-                        }
+                            if (_done) {
+                                tBufWriter.flush();
+                                return;
+                            }
 
-                        // Write proper
-                        tBufWriter.write(tLine);
-                        tBufWriter.newLine();
+                            // Check free space before write
+                            final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
+                            if (tFreeSpaceMeg < 1024) {
+                                System.out.println(String.format(
+                                        "Disk out of space, %d meg free", tFreeSpaceMeg));
+                                try {
+                                    Thread.sleep(Utility.kSleepTimeMillis);
+                                } catch (final InterruptedException ex2) {
+                                    if (_done) {
+                                        return;
+                                    }
+                                }
+                                continue;
+                            }
 
-                        // Time=based flush
-                        final long tCurrentTime = System.currentTimeMillis();
-                        if ((tCurrentTime - _lastFlush) > kFlushPeriodSeconds) {
-                            tBufWriter.flush();
-                            _lastFlush = tCurrentTime;
-                        }
+                            // Write proper
+                            tBufWriter.write(tPendingLine);
+                            tBufWriter.newLine();
 
-                        // Check if it's time to open another file
-                        final String tDateStringNew = _dateFormat.format(new Date());
-                        if (!tDateStringNew.equals(tDateString)) {
-                            System.out.println(String.format("Close file%n%s", tFile.getPath()));
-                            tBufWriter.flush();
-                            tBufWriter.close();
-                            tWriter.close();
-                            tFileStream.close();
-                            continue files;
+                            // Time=based flush
+                            final long tCurrentTime = System.currentTimeMillis();
+                            if ((tCurrentTime - _lastFlush) > kFlushPeriodSeconds) {
+                                tBufWriter.flush();
+                                _lastFlush = tCurrentTime;
+                            }
+
+                            // Check if it's time to open another file
+                            final String tDateStringNew = _dateFormat.format(new Date());
+                            if (!tDateStringNew.equals(tDateString)) {
+                                System.out.println(String.format("Close file%n%s", tFile.getPath()));
+                                tBufWriter.flush();
+                                tBufWriter.close();
+                                tWriter.close();
+                                tFileStream.close();
+                                continue files;
+                            }
+                        } finally {
+                            tPendingLine = _queue.take();
                         }
                     }
                 } catch (final InterruptedException ex) {
@@ -179,7 +180,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
             }
 
         } finally {
-            System.out.println(String.format("Achive thread exit done=%b", _done));
+            System.out.println(String.format("Archive thread exit done=%b", _done));
         }
     }
 
