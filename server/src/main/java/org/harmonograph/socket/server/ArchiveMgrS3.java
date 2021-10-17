@@ -51,7 +51,7 @@ public class ArchiveMgrS3 implements Runnable {
  
     @Override
     public void run() {
-        final byte[] tBuffer = new byte[kBufferSize];
+
         while (!_done) {
 
              final File tZipFile;
