@@ -81,6 +81,7 @@ public class SockServerRelay {
         _uplinkServer.start();
         _downlinkServer.start();
         _distributionMgr.start();
+        _archiveMgrZip.start();
     }
     
     public void halt()
@@ -89,6 +90,7 @@ public class SockServerRelay {
         _uplinkServer.halt();
         _downlinkServer.halt();
         _distributionMgr.halt();
+        _archiveMgrZip.halt();
     }    
   
 }

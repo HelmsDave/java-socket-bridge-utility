@@ -63,6 +63,10 @@ public class ArchiveMgrS3 implements Runnable {
                  }
                  continue;
              }
+             
+             System.out.println(String.format(
+                     "Pushing object to S3, %s to %s", tZipFile.getPath(), kBucketName));
+             final long tStartTimeMillis = System.currentTimeMillis();             
             try {
                 _s3.putObject(kBucketName, tZipFile.getName(), tZipFile);
                 
@@ -72,6 +76,11 @@ public class ArchiveMgrS3 implements Runnable {
                         "Failed to push to s3%n%s", tEx.getMessage()));
                 continue;
             }
+            
+            final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
+            System.out.println(String.format(
+                     "Done Pushing object to S3, %s to %s, %,dms",
+                    tZipFile.getPath(), kBucketName, tDeltaTimeMillis));
         }
     }
 }
