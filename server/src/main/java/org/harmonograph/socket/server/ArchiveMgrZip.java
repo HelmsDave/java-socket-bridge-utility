@@ -26,8 +26,8 @@ public class ArchiveMgrZip implements Runnable {
     public ArchiveMgrZip(final ArchiveMgrS3 aArchiveMgrS3)
     {
         _queue = new LinkedBlockingQueue<>();
-         _thread = new Thread(this, "Zip Manager");
-         _thread.setPriority(Thread.MIN_PRIORITY);
+        _thread = new Thread(this, "Zip Manager");
+        _thread.setPriority(Thread.MIN_PRIORITY);
         _done = false;       
         _archiveMgrS3 = aArchiveMgrS3;
     }
@@ -66,6 +66,18 @@ public class ArchiveMgrZip implements Runnable {
                      ArchiveMgr.kRawExtension, kZipExtension);
              final File tZipFile = new File(tZipFilename);
              
+             if (tZipFile.exists())
+             {
+                 System.out.println(String.format(
+                         "zip exists, replacing%n%s", tZipFile.getPath()));
+                 final boolean tRemoved = tZipFile.delete();
+                 if (!tRemoved)
+                 {
+                     System.out.println(String.format(
+                         "Error, failed to remove%n%s", tZipFile.getPath()));
+                 }
+             }
+             
              System.out.println(String.format(
                      "Compressing %s to %s", tRawFile.getPath(), tZipFile.getPath()));
              final long tStartTimeMillis = System.currentTimeMillis();
@@ -92,6 +104,7 @@ public class ArchiveMgrZip implements Runnable {
                
             } catch (final IOException e) {
                 System.out.println(String.format("Failed to write zip %s", tZipFile));
+                continue;
             }
             
             final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
@@ -99,7 +112,13 @@ public class ArchiveMgrZip implements Runnable {
                      "Done compressing %s to %s, %,dms",
                     tRawFile.getPath(), tZipFile.getPath(), tDeltaTimeMillis));
             
-            // todo, remove raw files
+            // remove raw file
+            final boolean tRemoved = tRawFile.delete();
+            if (!tRemoved)
+            {
+                System.out.println(String.format(
+                    "Error, failed to remove raw%n%s", tRawFile.getPath()));
+            }
             
              try {
                  _archiveMgrS3.getQueue().put(tZipFile);

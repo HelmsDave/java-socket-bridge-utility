@@ -80,8 +80,14 @@ public class SockServerRelay {
         _uplinkServer.start();
         _downlinkServer.start();
         _distributionMgr.start();
-        _archiveMgrZip.start();
-        _archiveMgrS3.start();
+        if (_archiveMgrZip != null)
+        {
+            _archiveMgrZip.start();
+        }
+        if (_archiveMgrS3 != null)
+        {
+            _archiveMgrS3.start();
+        }
     }
     
     public void halt()
