@@ -14,8 +14,14 @@ public class SockServerRelay {
     protected final ServerConnectionMgrDownlink _downlinkServer;
     /** Message distribution manager. */
     protected final DistributionMgr _distributionMgr;
+    
+    /** Zip output manager. */
+    protected final ZipManager _zipManager;
+    
     /** Data archive manager. */
     protected final ArchiveMgr _archiveMgr;
+    
+    
     /** Queue of messages between up-link and down-link, merged. */
     protected final LinkedBlockingQueue<String> _queue;    
     
@@ -45,11 +51,14 @@ public class SockServerRelay {
         
         if (aArchive)
         {
-            _archiveMgr = new ArchiveMgr(aName);
+            _zipManager = new ZipManager();
+            _zipManager.start();
+            _archiveMgr = new ArchiveMgr(aName, _zipManager);
             _distributionMgr.addListener(_archiveMgr);
         }
         else
         {
+            _zipManager = null;
             _archiveMgr = null;
         }
 

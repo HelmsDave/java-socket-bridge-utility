@@ -26,19 +26,24 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
     protected final LinkedBlockingQueue<String> _queue;
     protected final Thread _thread;
     protected volatile boolean _done;
+    
+    protected final ZipManager _zipMgr;
 
     protected static final long kFlushPeriodSeconds = 10;
+    
+    protected static final String kRawExtension = ".dat";
 
     /**
      * Simple constructor.
      *
      * @param aConnectionName Connection Name
      */
-    public ArchiveMgr(final String aConnectionName) {
+    public ArchiveMgr(final String aConnectionName, final ZipManager aZipMgr) {
         _connectionName = aConnectionName;
         _queue = new LinkedBlockingQueue<>();
-        _thread = new Thread(this, "ArchiveMgr_" + aConnectionName);
+        _thread = new Thread(this, "Archive Manager");
         _done = false;
+        _zipMgr = aZipMgr;
 
         _dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH");
         _dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -98,7 +103,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
 
                 // Figure filename an open file for write
                 final String tDateString = _dateFormat.format(new Date());
-                final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + ".dat";
+                final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + kRawExtension;
                 final File tFile = new File(tFilename);
                 System.out.println(String.format(
                         "Open file for write (exists=%b)%n%s", tFile.exists(), tFile.getPath()));
