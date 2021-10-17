@@ -162,6 +162,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                                 tBufWriter.close();
                                 tWriter.close();
                                 tFileStream.close();
+                                _zipMgr.getQueue().put(tFile);
                                 continue files;
                             }
                         } finally {

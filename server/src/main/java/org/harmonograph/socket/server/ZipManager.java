@@ -28,6 +28,7 @@ public class ZipManager implements Runnable {
     {
         _queue = new LinkedBlockingQueue<>();
          _thread = new Thread(this, "Zip Manager");
+         _thread.setPriority(Thread.MIN_PRIORITY);
         _done = false;       
     }
     
@@ -65,6 +66,10 @@ public class ZipManager implements Runnable {
                      ArchiveMgr.kRawExtension, kZipExtension);
              final File tZipFile = new File(tZipFilename);
              
+             System.out.println(String.format(
+                     "Compressing %s to %s", tRawFile.getPath(), tZipFile.getPath()));
+             final long tStartTimeMillis = System.currentTimeMillis();
+             
             try (FileOutputStream tFileOutputStream = new FileOutputStream(tZipFile);
                  ZipOutputStream tZipOutputStream = new ZipOutputStream(tFileOutputStream);
                  FileInputStream tFileInputStream = new FileInputStream(tRawFile)) {
@@ -88,6 +93,11 @@ public class ZipManager implements Runnable {
             } catch (final IOException e) {
                 System.out.println(String.format("Failed to write zip %s", tZipFile));
             }
+            
+            final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
+            System.out.println(String.format(
+                     "Done compressing %s to %s, %dms",
+                    tRawFile.getPath(), tZipFile.getPath(), tDeltaTimeMillis));
         }
     }
 }
