@@ -28,6 +28,7 @@ public class ServerConnectionMgrUplink {
         _verbose = aVerbose;
         _bufferSize = aBufferSize;
         _queue = aQueue;
+        _done = false;
 
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");
     }

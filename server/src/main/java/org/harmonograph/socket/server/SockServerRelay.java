@@ -57,6 +57,7 @@ public class SockServerRelay {
     
     public void halt()
     {
+        System.out.print(String.format("Halting server"));
         _uplinkServer.halt();
         _downlinkServer.halt();
         _archiveMgr.halt();

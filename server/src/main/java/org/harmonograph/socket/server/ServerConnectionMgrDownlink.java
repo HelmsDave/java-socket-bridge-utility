@@ -50,6 +50,7 @@ public class ServerConnectionMgrDownlink {
         _queue = aQueue;
         _downlinks = new CopyOnWriteArrayList<>();
         _archiveMgr = aArchiveMgr;
+        _done = false;
 
         _threadQueueWorker = new Thread(new QueueWorker(), "Queue worker");
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");

@@ -38,6 +38,7 @@ public class ClientConnectionMgrUplink implements Runnable {
         _bufferSize = aBufferSize;
         _connectionName = aConnectionName;
         _thread = new Thread(this, aConnectionName);
+        _done = false;
     }
     
     /** Start worker. */
