@@ -94,18 +94,30 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
         try {
             
             // Check for orphan files
+            final String tCurrentDateString = _dateFormat.format(new Date());
+            final int tExpectedFilenameLength
+                    = kDateFormat.length() + 1 + _connectionName.length() + kRawExtension.length();
             for (final File tFile : new File(kArchivePath).listFiles())
             {
+                final String tFilename = tFile.getName();
                 if (!tFile.isFile() ||  !tFile.canRead()
-                        || !tFile.getName().endsWith(kRawExtension)
-                        || !tFile.getName().contains(_connectionName)
-                        || tFile.getName().length()
-                            !=  kDateFormat.length() + 1 + _connectionName.length() + kRawExtension.length())
+                        || !tFilename.endsWith(kRawExtension)
+                        || !tFilename.contains(_connectionName)
+                        || (tFilename.length() !=  tExpectedFilenameLength)
+                        || tFilename.startsWith(tCurrentDateString))
                 {
                     continue;
                 }
                 System.out.println(String.format(
-                            "likely orphan %s", tFile.getName()));
+                            "likely orphan %s, continuing archive", tFile.getName()));
+                try {
+                    _zipMgr.getQueue().put(tFile);
+                } catch (final InterruptedException ex) {
+                    if (_done) {
+                        return;
+                    }
+                    continue;
+                }
             }
             
             // Loop to name and write output files
