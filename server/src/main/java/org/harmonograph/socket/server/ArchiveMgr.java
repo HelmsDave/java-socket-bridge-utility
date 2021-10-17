@@ -32,6 +32,8 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
     protected static final long kFlushPeriodSeconds = 10;
     
     protected static final String kRawExtension = ".dat";
+    
+    protected static final String kArchivePath = "/tmp";
 
     /**
      * Simple constructor.
@@ -86,6 +88,19 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
     @Override
     public void run() {
         try {
+            
+            // Check for orphan files
+            for (final File tFile : new File(kArchivePath).listFiles())
+            {
+                if (tFile.isFile() && tFile.canRead()
+                        && tFile.getName().endsWith(kRawExtension)
+                        && tFile.getName().contains(_connectionName))
+                {
+                    System.out.println(String.format(
+                            "possible orphan %s", tFile.getName()));
+                }
+            }
+            
             // Loop to name and write output files
             files:
             while (!_done) {
@@ -103,7 +118,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
 
                 // Figure filename an open file for write
                 final String tDateString = _dateFormat.format(new Date());
-                final String tFilename = "/tmp/" + tDateString + "_" + _connectionName + kRawExtension;
+                final String tFilename = kArchivePath + "/" + tDateString + "_" + _connectionName + kRawExtension;
                 final File tFile = new File(tFilename);
                 System.out.println(String.format(
                         "Open file for write (exists=%b)%n%s", tFile.exists(), tFile.getPath()));
