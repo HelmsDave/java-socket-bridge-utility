@@ -91,7 +91,10 @@ public class ClientConnectionMgrUplink implements Runnable {
         } catch (InterruptedException ex) {
             System.out.println("Queue error: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
+            System.out.print(String.format(
+                    "Lost connection from %s %d%n%s",
+                    _socket.getInetAddress().getCanonicalHostName(),
+                    _socket.getPort(), ex.getMessage()));                
         }
 
     }
