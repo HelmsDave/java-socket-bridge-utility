@@ -6,5 +6,6 @@ Restart=always
 RestartSec=10s
 User=ec2-user
 ExecStart=/home/ec2-user/java-socket-bridge-utility/server/scripts/run_serverAis.sh
+SuccessExitStatus=143
 [Install]
 WantedBy=multi-user.target
