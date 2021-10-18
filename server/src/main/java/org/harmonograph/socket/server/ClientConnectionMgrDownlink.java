@@ -46,11 +46,13 @@ public class ClientConnectionMgrDownlink
     }
     
     /** Start worker. */
+    @Override
     public void start()
     {
         _thread.start();
     }
-
+    
+    @Override
     public void halt()
     {
         _done = true;
@@ -62,17 +64,19 @@ public class ClientConnectionMgrDownlink
      * 
      * @return Connection name 
      */
+    @Override
     public String getConnectionName()
     {
         return _connectionName;
     }
     
-    
+    @Override
     public LinkedBlockingQueue<String> getQueue()
     {
         return _queue;
     }
     
+    @Override
     public boolean isConnected()
     {
         if (!_connected)
