@@ -88,22 +88,9 @@ public class DistributionMgr implements Runnable {
                             return;
                         }
                         if (!tDown.isConnected()) {
-                            _downlinks.remove(tDown);
-                            continue;
-                        }
-                        
-                        final int tBacklog = tDown.getQueue().size();
-                        if (tBacklog > Utility.kBacklogMessagesWarning)
-                        {
-                            System.out.println(String.format(
-                                    "Backlog on client %s, %d messages", 
-                                    tDown.getConnectionName(), tBacklog));
-                        }
-                        if (tBacklog > Utility.kBacklogMessagesMax)
-                        {
                             System.out.println(String.format(
                                     "Removing client %s",
-                                    tDown.getConnectionName()));                            
+                                    tDown.getConnectionName()));                               
                             tDown.halt();
                             _downlinks.remove(tDown);
                             continue;

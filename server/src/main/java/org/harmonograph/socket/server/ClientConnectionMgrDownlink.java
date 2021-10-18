@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.harmonograph.socket.util.Utility;
 
 /** Connection manager for single client connection, down-link mode. */
 public class ClientConnectionMgrDownlink 
@@ -74,7 +75,24 @@ public class ClientConnectionMgrDownlink
     
     public boolean isConnected()
     {
-        return _connected;
+        if (!_connected)
+        {
+            return false;
+        }
+        
+        final int tBacklog = _queue.size();
+        if (tBacklog > Utility.kBacklogMessagesWarning)
+        {
+            System.out.println(String.format(
+                    "Backlog on client %s, %d messages", 
+                    _connectionName, tBacklog));
+        }
+        if (tBacklog > Utility.kBacklogMessagesMax)
+        {                         
+            return false;
+        }
+        
+        return true;
     }
 
     @Override
