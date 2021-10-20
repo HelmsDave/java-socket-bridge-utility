@@ -29,7 +29,7 @@ public final class SockServerRelayMain {
         String tName = "";
         boolean tArchive = false;
 
-        for (final Handler tHandler : kLogger.getHandlers())
+        for (final Handler tHandler : Logger.getGlobal().getHandlers())
             if (tHandler instanceof ConsoleHandler)
             {
                 tHandler.setFormatter(new LocalFormatter());
