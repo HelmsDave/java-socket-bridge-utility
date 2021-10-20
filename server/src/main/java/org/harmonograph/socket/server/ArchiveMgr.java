@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.harmonograph.socket.util.Utility;
 
 /**
@@ -39,6 +40,9 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
     
     protected static final String kRawExtension = ".dat";
 
+    private static final Logger kLogger
+            = Logger.getLogger(ArchiveMgr.class.getName());       
+    
     /**
      * Simple constructor.
      *
@@ -108,7 +112,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                 {
                     continue;
                 }
-                System.out.println(String.format(
+                kLogger.info(String.format(
                             "likely orphan %s, continuing archive", tFile.getName()));
                 try {
                     _zipMgr.getQueue().put(tFile);
@@ -139,7 +143,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                 final String tDateString = _dateFormat.format(new Date());
                 final String tFilename = kArchivePath + "/" + tDateString + "_" + _connectionName + kRawExtension;
                 final File tFile = new File(tFilename);
-                System.out.println(String.format(
+                kLogger.info(String.format(
                         "Open file for write (exists=%b)%n%s", tFile.exists(), tFile.getPath()));
 
                 try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
@@ -154,7 +158,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                         try {
 
                             if (tPendingLine == null) {
-                                System.out.println(String.format("Null line"));
+                                kLogger.info(String.format("Null line"));
                                 continue;
                             }
                             if (_done) {
@@ -165,7 +169,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                             // Check free space before write
                             final long tFreeSpaceMeg = tFile.getFreeSpace() / (1024 * 1024);
                             if (tFreeSpaceMeg < 1024) {
-                                System.out.println(String.format(
+                                kLogger.info(String.format(
                                         "Disk out of space, %d meg free", tFreeSpaceMeg));
                                 try {
                                     Thread.sleep(Utility.kSleepTimeMillis);
@@ -191,7 +195,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                             // Check if it's time to open another file
                             final String tDateStringNew = _dateFormat.format(new Date());
                             if (!tDateStringNew.equals(tDateString)) {
-                                System.out.println(String.format("Close file%n%s", tFile.getPath()));
+                                kLogger.info(String.format("Close file%n%s", tFile.getPath()));
                                 tBufWriter.flush();
                                 tBufWriter.close();
                                 tWriter.close();
@@ -208,7 +212,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                         return;
                     }
                 } catch (final IOException ex) {
-                    System.out.println("I/O error: " + ex.getMessage());
+                    kLogger.info("I/O error: " + ex.getMessage());
                     try {
                         Thread.sleep(Utility.kSleepTimeMillis);
                     } catch (final InterruptedException ex2) {
@@ -220,7 +224,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
             }
 
         } finally {
-            System.out.println(String.format("Archive thread exit done=%b", _done));
+            kLogger.info(String.format("Archive thread exit done=%b", _done));
         }
     }
 

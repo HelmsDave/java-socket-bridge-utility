@@ -1,6 +1,8 @@
 
 package org.harmonograph.socket.server;
 
+import java.util.logging.Logger;
+
 
 /**
  * Socket server relay application.
@@ -9,6 +11,9 @@ package org.harmonograph.socket.server;
  */
 public final class SockServerRelayMain {
    
+    private static final Logger kLogger
+            = Logger.getLogger(SockServerRelayMain.class.getName());
+    
     /**
      * @param aArgs the command line arguments
      */
@@ -46,7 +51,7 @@ public final class SockServerRelayMain {
                     tArchive = true;
                     break;                    
                 default:
-                    System.out.println(String.format(
+                    kLogger.info(String.format(
                             "unknown arg %s", aArgs[tIndex]));
                     break;                    
             }

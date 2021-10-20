@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.rmi.UnknownHostException;
+import java.util.logging.Logger;
 import org.harmonograph.socket.util.Utility;
 
 
@@ -29,6 +30,9 @@ public class SockClientRelay implements Runnable {
     protected long _reportTimeLast;
     protected int _reportLines;
     protected int _reportChars; 
+    
+    private static final Logger kLogger
+            = Logger.getLogger(SockClientRelay.class.getName());     
     
     public SockClientRelay(
             final String aPullHost, final short aPullPort,
@@ -99,7 +103,7 @@ public class SockClientRelay implements Runnable {
                                     _reportLines, _reportChars/1024));
                             _reportLines = 0;
                             _reportChars = 0;
-                            System.out.println(tLine);
+                            kLogger.info(tLine);
                             _reportTimeLast = System.currentTimeMillis();
                         }                        
                     }                       
@@ -108,14 +112,14 @@ public class SockClientRelay implements Runnable {
                     tPushBufWriter.newLine();
                 }
             } catch (UnknownHostException ex) {
-                System.out.println("Push Server not found: " + ex.getMessage());
+                kLogger.info("Push Server not found: " + ex.getMessage());
             } catch (IOException ex) {
-                System.out.println("I/O error: " + ex.getMessage());
+                kLogger.info("I/O error: " + ex.getMessage());
             }
         } catch (UnknownHostException ex) {
-            System.out.println("Pull Server not found: " + ex.getMessage());
+            kLogger.info("Pull Server not found: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
+            kLogger.info("I/O error: " + ex.getMessage());
         }
     }
     

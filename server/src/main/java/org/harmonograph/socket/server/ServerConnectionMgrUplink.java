@@ -3,6 +3,7 @@ package org.harmonograph.socket.server;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.harmonograph.socket.util.Utility;
 
 /**
@@ -18,6 +19,9 @@ public class ServerConnectionMgrUplink {
 
     protected final Thread _threadServerListener;
     protected volatile boolean _done;
+    
+    private static final Logger kLogger
+            = Logger.getLogger(ServerConnectionMgrUplink.class.getName());       
 
     public ServerConnectionMgrUplink(
             final short aPort,

@@ -1,12 +1,17 @@
 
 package org.harmonograph.socket.bridge;
 
+import java.util.logging.Logger;
+
 
 /**
  * Relay application for socket clients.
  * This pulls from one server and pushes to another.
  */
 public final class SockClientRelayMain {
+    
+    private static final Logger kLogger
+            = Logger.getLogger(SockClientRelayMain.class.getName());       
     
     private SockClientRelayMain()
     {
@@ -49,7 +54,7 @@ public final class SockClientRelayMain {
                     tBufferSize = Integer.parseInt(tBufferSizeString);
                     break;
                 default:
-                    System.out.println(String.format(
+                    kLogger.info(String.format(
                             "unknown arg %s", aArgs[tIndex]));
                     break;
             }

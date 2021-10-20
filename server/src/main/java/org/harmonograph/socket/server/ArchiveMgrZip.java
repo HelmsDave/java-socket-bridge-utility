@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,6 +23,9 @@ public class ArchiveMgrZip implements Runnable {
     protected static final String kZipExtension = ".zip";
     
     protected static final int kBufferSize = 64*1024;
+    
+    private static final Logger kLogger
+            = Logger.getLogger(ArchiveMgrZip.class.getName());     
     
     public ArchiveMgrZip(final ArchiveMgrS3 aArchiveMgrS3)
     {
@@ -68,17 +72,17 @@ public class ArchiveMgrZip implements Runnable {
              
              if (tZipFile.exists())
              {
-                 System.out.println(String.format(
+                 kLogger.info(String.format(
                          "zip exists, replacing%n%s", tZipFile.getPath()));
                  final boolean tRemoved = tZipFile.delete();
                  if (!tRemoved)
                  {
-                     System.out.println(String.format(
+                     kLogger.info(String.format(
                          "Error, failed to remove%n%s", tZipFile.getPath()));
                  }
              }
              
-             System.out.println(String.format(
+             kLogger.info(String.format(
                      "Compressing %s to %s", tRawFile.getPath(), tZipFile.getPath()));
              final long tStartTimeMillis = System.currentTimeMillis();
              
@@ -103,12 +107,12 @@ public class ArchiveMgrZip implements Runnable {
                 tZipOutputStream.closeEntry();
                
             } catch (final IOException e) {
-                System.out.println(String.format("Failed to write zip %s", tZipFile));
+                kLogger.info(String.format("Failed to write zip %s", tZipFile));
                 continue;
             }
             
             final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
-            System.out.println(String.format(
+            kLogger.info(String.format(
                      "Done compressing %s to %s, %,dms",
                     tRawFile.getPath(), tZipFile.getPath(), tDeltaTimeMillis));
             
@@ -116,7 +120,7 @@ public class ArchiveMgrZip implements Runnable {
             final boolean tRemoved = tRawFile.delete();
             if (!tRemoved)
             {
-                System.out.println(String.format(
+                kLogger.info(String.format(
                     "Error, failed to remove raw%n%s", tRawFile.getPath()));
             }
             

@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import java.io.File;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /**
  * Archive logic to write to S3
@@ -20,6 +21,9 @@ public class ArchiveMgrS3 implements Runnable {
 
     protected static final String kBucketName = "serial.archive";
 
+    private static final Logger kLogger
+            = Logger.getLogger(ArchiveMgrS3.class.getName());       
+    
     public ArchiveMgrS3() {
         _queue = new LinkedBlockingQueue<>();
         _thread = new Thread(this, "S3 Manager");
@@ -61,14 +65,14 @@ public class ArchiveMgrS3 implements Runnable {
                 continue;
             }
 
-            System.out.println(String.format(
+            kLogger.info(String.format(
                     "Pushing object to S3, %s to %s", tZipFile.getPath(), kBucketName));
             final long tStartTimeMillis = System.currentTimeMillis();
             try {
                 _s3.putObject(kBucketName, tZipFile.getName(), tZipFile);
 
             } catch (final AmazonServiceException tEx) {
-                System.out.println(String.format(
+                kLogger.info(String.format(
                         "Failed to push to s3%n%s", tEx.getMessage()));
                 continue;
             }
@@ -76,12 +80,12 @@ public class ArchiveMgrS3 implements Runnable {
             // remove zip file
             final boolean tRemoved = tZipFile.delete();
             if (!tRemoved) {
-                System.out.println(String.format(
+                kLogger.info(String.format(
                         "Error, failed to remove raw%n%s", tZipFile.getPath()));
             }
 
             final long tDeltaTimeMillis = System.currentTimeMillis() - tStartTimeMillis;
-            System.out.println(String.format(
+            kLogger.info(String.format(
                     "Done Pushing object to S3, %s to %s, %,dms",
                     tZipFile.getPath(), kBucketName, tDeltaTimeMillis));
         }

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.harmonograph.socket.util.Utility;
 
 /** Connection manager for single client connection, down-link mode. */
@@ -21,6 +22,9 @@ public class ClientConnectionMgrDownlink
     protected final Thread _thread;
     protected volatile boolean _done;
 
+    private static final Logger kLogger
+            = Logger.getLogger(ClientConnectionMgrDownlink.class.getName());      
+    
     /**
      * Simple constructor.
      * @param aSocket Client socket
@@ -87,7 +91,7 @@ public class ClientConnectionMgrDownlink
         final int tBacklog = _queue.size();
         if (tBacklog > Utility.kBacklogMessagesWarning)
         {
-            System.out.println(String.format(
+            kLogger.info(String.format(
                     "Backlog on client %s, %d messages", 
                     _connectionName, tBacklog));
         }
@@ -125,10 +129,12 @@ public class ClientConnectionMgrDownlink
         } catch (InterruptedException ex) {
             if (!_done)
             {
-                System.out.println("Queue error: " + ex.getMessage());
+                kLogger.info("Queue error: " + ex.getMessage());
             } 
         } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
+            System.out.print(String.format("Lost downlink connection from %s %d%n",
+                    _socket.getInetAddress().getCanonicalHostName(),
+                    _socket.getPort()));
         }
         _connected = false;
     }

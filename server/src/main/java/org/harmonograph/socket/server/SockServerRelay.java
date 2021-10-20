@@ -2,6 +2,7 @@
 package org.harmonograph.socket.server;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /**
  * Socket server relay application.
@@ -25,6 +26,9 @@ public class SockServerRelay {
     
     /** Queue of messages between up-link and down-link, merged. */
     protected final LinkedBlockingQueue<String> _queue;    
+    
+    private static final Logger kLogger
+            = Logger.getLogger(SockServerRelay.class.getName());    
     
     /**
      * Simple constructor.

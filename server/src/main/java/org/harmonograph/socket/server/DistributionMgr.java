@@ -3,6 +3,7 @@ package org.harmonograph.socket.server;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.harmonograph.socket.util.Utility;
 
 /**
@@ -25,6 +26,9 @@ public class DistributionMgr implements Runnable {
     protected int _reportChars;
     protected volatile boolean _done;
 
+    private static final Logger kLogger
+            = Logger.getLogger(DistributionMgr.class.getName());     
+    
     /**
      * Simple constructor.
      * @param aPort Downlink port number
@@ -88,7 +92,7 @@ public class DistributionMgr implements Runnable {
                             return;
                         }
                         if (!tDown.isConnected()) {
-                            System.out.println(String.format(
+                            kLogger.info(String.format(
                                     "Removing client %s",
                                     tDown.getConnectionName()));                               
                             tDown.halt();
@@ -102,13 +106,17 @@ public class DistributionMgr implements Runnable {
                     if (_verbose) {
                         ++_reportLines;
                         _reportChars += tLine.length();
-                        if (System.currentTimeMillis() - _reportTimeLast > Utility.kLogTimeMillis) {
-                            System.out.print(String.format(
-                                    "Received %,d lines, %,dk chars, %d listeners%n",
-                                    _reportLines, _reportChars / 1024, _downlinks.size()));
+                        final long tDeltaTimeMillis
+                                = System.currentTimeMillis() - _reportTimeLast;
+                        if (tDeltaTimeMillis > Utility.kLogTimeMillis) {
+                            kLogger.info(String.format(
+                                    "Received %,.1f lines/sec, %,.1fk chars/sec, %d listeners%n%s",
+                                    _reportLines / (tDeltaTimeMillis * 1000f),
+                                    (_reportChars / 1024f) / (tDeltaTimeMillis * 1000f),
+                                    _downlinks.size(),
+                                    tLine));
                             _reportLines = 0;
                             _reportChars = 0;
-                            System.out.println(tLine);
                             _reportTimeLast = System.currentTimeMillis();
                         }
                     }

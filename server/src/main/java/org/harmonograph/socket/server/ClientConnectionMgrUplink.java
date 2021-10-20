@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /** Connection manager for single client connection, uplink mode. */
 public class ClientConnectionMgrUplink implements Runnable {
@@ -18,6 +19,9 @@ public class ClientConnectionMgrUplink implements Runnable {
     protected final Thread _thread;
     protected volatile boolean _done;
 
+    private static final Logger kLogger
+            = Logger.getLogger(ClientConnectionMgrUplink.class.getName());     
+    
     /**
      * Simple constructor.
      * @param aSocket Client socket
@@ -89,9 +93,9 @@ public class ClientConnectionMgrUplink implements Runnable {
             }
             
         } catch (InterruptedException ex) {
-            System.out.println("Queue error: " + ex.getMessage());
+            kLogger.info("Queue error: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.print(String.format(
+            kLogger.info(String.format(
                     "Lost connection from %s %d%n%s",
                     _socket.getInetAddress().getCanonicalHostName(),
                     _socket.getPort(), ex.getMessage()));                
