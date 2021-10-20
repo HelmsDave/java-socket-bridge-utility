@@ -30,10 +30,12 @@ public final class SockServerRelayMain {
         boolean tArchive = false;
 
         for (final Handler tHandler : Logger.getLogger("").getHandlers())
+        {
             if (tHandler instanceof ConsoleHandler)
             {
                 tHandler.setFormatter(new LocalFormatter());
             }
+        }
         
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
