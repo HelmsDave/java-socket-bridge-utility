@@ -111,8 +111,8 @@ public class DistributionMgr implements Runnable {
                         if (tDeltaTimeMillis > Utility.kLogTimeMillis) {
                             kLogger.info(String.format(
                                     "Received %,.1f lines/sec, %,.1fk chars/sec, %d listeners%n%s",
-                                    _reportLines / (tDeltaTimeMillis * 1000f),
-                                    (_reportChars / 1024f) / (tDeltaTimeMillis * 1000f),
+                                    _reportLines / (tDeltaTimeMillis / 1000f),
+                                    (_reportChars / 1024f) / (tDeltaTimeMillis / 1000f),
                                     _downlinks.size(),
                                     tLine));
                             _reportLines = 0;
