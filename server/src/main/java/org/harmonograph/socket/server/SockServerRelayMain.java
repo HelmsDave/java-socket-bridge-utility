@@ -1,6 +1,10 @@
 
 package org.harmonograph.socket.server;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 
@@ -25,6 +29,12 @@ public final class SockServerRelayMain {
         String tName = "";
         boolean tArchive = false;
 
+        for (final Handler tHandler : kLogger.getHandlers())
+            if (tHandler instanceof ConsoleHandler)
+            {
+                tHandler.setFormatter(new LocalFormatter());
+            }
+        
         for (int tIndex = 0; tIndex < aArgs.length; ++tIndex)
         {
             switch (aArgs[tIndex])
@@ -63,4 +73,28 @@ public final class SockServerRelayMain {
         tServer.start();
     }
     
+static class LocalFormatter extends Formatter {
+
+    @Override
+    public String format(LogRecord record) {
+        StringBuilder builder = new StringBuilder(1000);
+        builder.append("[");
+        if ((record.getSourceClassName() != null) && !record.getSourceClassName().isEmpty())
+        {
+            final String[] tSplit = record.getSourceClassName().split("\\.");
+            builder.append(tSplit[tSplit.length - 1]);
+        }
+        builder.append(".");
+        if ((record.getSourceMethodName() != null) && !record.getSourceMethodName().isEmpty())
+        {
+            builder.append(record.getSourceMethodName());
+        }
+        builder.append(" ");
+        builder.append(record.getLevel());
+        builder.append("] ");
+        builder.append(formatMessage(record));
+        builder.append(String.format("%n"));
+        return builder.toString();
+    }
+}    
 }
