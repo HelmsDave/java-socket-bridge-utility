@@ -7,7 +7,7 @@ RestartSec=10s
 User=ec2-user
 ExecStart=/home/ec2-user/java-socket-bridge-utility/server/scripts/run_serverAis.sh
 SuccessExitStatus=143
-StandardOutput=file:/var/log/server/serverAis.log
-StandardError=file:/var/log/server/serverAis.log
+StandardOutput=append:/tmp/serverAis.log
+StandardError=append:/tmp/serverAis.log
 [Install]
 WantedBy=multi-user.target
