@@ -7,7 +7,5 @@ RestartSec=10s
 User=ec2-user
 ExecStart=/home/ec2-user/java-socket-bridge-utility/server/scripts/run_serverAdsb2.sh
 SuccessExitStatus=143
-StandardOutput=file:/tmp/serverAdsb2.log
-StandardError=file:/tmp/serverAdsb2.log
 [Install]
 WantedBy=multi-user.target

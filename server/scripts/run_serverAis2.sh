@@ -5,5 +5,5 @@ exec java -cp "/home/ec2-user/java-socket-bridge-utility/server/target/java-sock
    -uplinkPort 30019 \
    -downlinkPort 30018 \
    -name AIS_Dallas \
-   -verbose
+   -verbose 2>&1 | tee -a /tmp/serverAis2.log
    
