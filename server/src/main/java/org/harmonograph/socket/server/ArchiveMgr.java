@@ -148,7 +148,7 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
 
                 try (FileOutputStream tFileStream = new FileOutputStream(tFile, true);
                         OutputStreamWriter tWriter = new OutputStreamWriter(tFileStream, StandardCharsets.UTF_8);
-                        BufferedWriter tBufWriter = new BufferedWriter(tWriter)) {
+                        BufferedWriter tBufWriter = new BufferedWriter(tWriter, Utility.kDiskBufferSize)) {
 
                     _lastFlush = System.currentTimeMillis();
 

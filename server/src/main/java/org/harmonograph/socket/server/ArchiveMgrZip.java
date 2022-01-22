@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.harmonograph.socket.util.Utility;
 
 /**
  * Manage compression of data file into zip file.
@@ -22,7 +23,7 @@ public class ArchiveMgrZip implements Runnable {
     
     protected static final String kZipExtension = ".zip";
     
-    protected static final int kBufferSize = 64*1024;
+    //protected static final int kBufferSize = 64*1024;
     
     private static final Logger kLogger
             = Logger.getLogger(ArchiveMgrZip.class.getName());     
@@ -54,7 +55,7 @@ public class ArchiveMgrZip implements Runnable {
 
     @Override
     public void run() {
-        final byte[] tBuffer = new byte[kBufferSize];
+        final byte[] tBuffer = new byte[Utility.kDiskBufferSize];
         while (!_done) {
 
              final File tRawFile;
