@@ -5,7 +5,7 @@ package org.harmonograph.socket.util;
 public final class Utility {
     
     /** Warning threshold for backlog messages. */
-    public static final int kBacklogMessagesWarning = 200;
+    public static final int kBacklogMessagesWarning = 100;
     /** Max backlog messages. */
     public static final int kBacklogMessagesMax = 1000;      
     

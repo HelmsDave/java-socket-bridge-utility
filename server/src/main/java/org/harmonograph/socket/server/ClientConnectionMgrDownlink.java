@@ -90,7 +90,7 @@ public class ClientConnectionMgrDownlink
         }
         
         final int tBacklog = _queue.size();
-        if (tBacklog > Utility.kBacklogMessagesWarning)
+        if ((tBacklog > 0) && (tBacklog % Utility.kBacklogMessagesWarning == 0))
         {
             kLogger.info(String.format(
                     "Backlog on client %s, %d processed, %d backlog", 
