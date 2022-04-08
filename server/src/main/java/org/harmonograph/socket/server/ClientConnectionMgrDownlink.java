@@ -44,7 +44,7 @@ public class ClientConnectionMgrDownlink
         _bufferSize = aBufferSize;
         _connected = true;
         _connectionName = aConnectionName;
-        _thread = new Thread(this, aConnectionName);
+        _thread = new Thread(this, "Downlink_" + aConnectionName);
         _done = false;
         
     }
@@ -119,6 +119,16 @@ public class ClientConnectionMgrDownlink
                     _connected = false;
                     return;
                 }
+                if (!_socket.isConnected())
+                {
+                    _connected = false;
+                    return;
+                }
+                if (tLine.isEmpty())
+                {
+                    continue;
+                }
+
                 if (_done)
                 {
                     return;

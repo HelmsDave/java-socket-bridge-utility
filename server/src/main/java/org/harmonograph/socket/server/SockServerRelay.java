@@ -23,6 +23,9 @@ public class SockServerRelay {
     /** S3 manager. */
     protected final ArchiveMgrS3 _archiveMgrS3;
     
+    /** Heartbeat Manager. */
+    protected final HeatbeatMgr _heartbeatMgr;
+    
     
     /** Queue of messages between up-link and down-link, merged. */
     protected final LinkedBlockingQueue<String> _queue;    
@@ -71,6 +74,8 @@ public class SockServerRelay {
 
         _downlinkServer = new ServerConnectionMgrDownlink(
                 aDownlinkPort, aVerbose, aBufferSize, _queue, _distributionMgr);
+        
+        _heartbeatMgr = new HeatbeatMgr(_queue);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",

@@ -19,6 +19,7 @@ public class ServerConnectionMgrUplink {
 
     protected final Thread _threadServerListener;
     protected volatile boolean _done;
+    protected int _connectionCount;
     
     private static final Logger kLogger
             = Logger.getLogger(ServerConnectionMgrUplink.class.getName());       
@@ -33,6 +34,7 @@ public class ServerConnectionMgrUplink {
         _bufferSize = aBufferSize;
         _queue = aQueue;
         _done = false;
+        _connectionCount = 0;
 
         _threadServerListener = new Thread(new ServerListener(), "Server Listener");
     }
@@ -46,7 +48,9 @@ public class ServerConnectionMgrUplink {
             final String tConnectionName
                     = tClient.getInetAddress().getCanonicalHostName() + "_"
                     + tClient.getPort();
-
+            ++_connectionCount;
+            kLogger.info(String.format(
+                    "Uplink new connection %s (%d)", tConnectionName, _connectionCount));
             final ClientConnectionMgrUplink tHandler
                     = new ClientConnectionMgrUplink(
                             tClient, _queue, _verbose, _bufferSize, tConnectionName);

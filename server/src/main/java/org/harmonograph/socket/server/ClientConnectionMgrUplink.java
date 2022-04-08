@@ -41,7 +41,7 @@ public class ClientConnectionMgrUplink implements Runnable {
         _verbose = aVerbose;
         _bufferSize = aBufferSize;
         _connectionName = aConnectionName;
-        _thread = new Thread(this, aConnectionName);
+        _thread = new Thread(this, "Uplink_" + aConnectionName);
         _done = false;
     }
     

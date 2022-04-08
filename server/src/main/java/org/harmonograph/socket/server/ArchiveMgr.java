@@ -138,7 +138,12 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                     }
                     continue;
                 }
-
+                
+                if (tPendingLine.isEmpty())
+                {
+                    continue;
+                }
+                
                 // Figure filename an open file for write
                 final String tDateString = _dateFormat.format(new Date());
                 final String tFilename = kArchivePath + "/" + tDateString + "_" + _connectionName + kRawExtension;
@@ -161,6 +166,10 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
                                 kLogger.info(String.format("Null line"));
                                 continue;
                             }
+                            if (tPendingLine.isEmpty())
+                            {
+                                continue;
+                            }                            
                             if (_done) {
                                 tBufWriter.flush();
                                 return;

@@ -23,6 +23,8 @@ public class ServerConnectionMgrDownlink implements Runnable {
 
     protected volatile boolean _done;
 
+    protected int _connectionCount;
+    
     private static final Logger kLogger
             = Logger.getLogger(ServerConnectionMgrDownlink.class.getName());     
     
@@ -46,6 +48,7 @@ public class ServerConnectionMgrDownlink implements Runnable {
         _queue = aQueue;
         _done = false;
         _distributionMgr = aDistributionMgr;
+        _connectionCount = 0;
 
         _threadServerListener = new Thread(this, "Server Listener");
     }
@@ -59,7 +62,9 @@ public class ServerConnectionMgrDownlink implements Runnable {
             final String tConnectionName
                     = tClient.getInetAddress().getCanonicalHostName() + "_"
                     + tClient.getPort();
-
+            ++_connectionCount;
+            kLogger.info(String.format(
+                    "Downlink new connection %s (%d)", tConnectionName, _connectionCount));
             final ClientConnectionMgrDownlink tHandler
                     = new ClientConnectionMgrDownlink(
                             tClient, _verbose, _bufferSize, tConnectionName);
