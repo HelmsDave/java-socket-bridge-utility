@@ -93,7 +93,7 @@ public class ClientConnectionMgrDownlink
         if (tBacklog > Utility.kBacklogMessagesWarning)
         {
             kLogger.info(String.format(
-                    "Backlog on client %s, %d processed, %d messages", 
+                    "Backlog on client %s, %d processed, %d backlog", 
                     _connectionName, _messagesProcessed, tBacklog));
         }
         if (tBacklog > Utility.kBacklogMessagesMax)
