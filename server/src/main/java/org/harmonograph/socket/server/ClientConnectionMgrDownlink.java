@@ -21,6 +21,7 @@ public class ClientConnectionMgrDownlink
     protected final String _connectionName;
     protected final Thread _thread;
     protected volatile boolean _done;
+    protected int _messagesProcessed;
 
     private static final Logger kLogger
             = Logger.getLogger(ClientConnectionMgrDownlink.class.getName());      
@@ -46,7 +47,7 @@ public class ClientConnectionMgrDownlink
         _connectionName = aConnectionName;
         _thread = new Thread(this, "Downlink_" + aConnectionName);
         _done = false;
-        
+        _messagesProcessed = 0;
     }
     
     /** Start worker. */
@@ -92,8 +93,8 @@ public class ClientConnectionMgrDownlink
         if (tBacklog > Utility.kBacklogMessagesWarning)
         {
             kLogger.info(String.format(
-                    "Backlog on client %s, %d messages", 
-                    _connectionName, tBacklog));
+                    "Backlog on client %s, %d processed, %d messages", 
+                    _connectionName, _messagesProcessed, tBacklog));
         }
         if (tBacklog > Utility.kBacklogMessagesMax)
         {                         
@@ -135,6 +136,7 @@ public class ClientConnectionMgrDownlink
                 }
                 tBufWriter.write(tLine);
                 tBufWriter.newLine();
+                ++_messagesProcessed;
             }
         } catch (InterruptedException ex) {
             if (!_done)
