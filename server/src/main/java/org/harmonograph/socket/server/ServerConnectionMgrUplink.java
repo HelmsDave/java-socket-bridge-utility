@@ -36,7 +36,7 @@ public class ServerConnectionMgrUplink {
         _done = false;
         _connectionCount = 0;
 
-        _threadServerListener = new Thread(new ServerListener(), "Server Listener");
+        _threadServerListener = new Thread(new ServerListener(), "Server Listener Uplink");
     }
 
     /** Serve connections on server socket. */

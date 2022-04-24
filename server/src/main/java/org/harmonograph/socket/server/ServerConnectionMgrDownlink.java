@@ -50,7 +50,7 @@ public class ServerConnectionMgrDownlink implements Runnable {
         _distributionMgr = aDistributionMgr;
         _connectionCount = 0;
 
-        _threadServerListener = new Thread(this, "Server Listener");
+        _threadServerListener = new Thread(this, "Server Listener Downlink");
     }
 
     /** Serve connections on server socket. */
