@@ -1,5 +1,6 @@
 package org.harmonograph.socket.server;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -86,7 +87,11 @@ public class DistributionMgr implements Runnable {
                         } 
                         continue;
                     }
-                    for (final DistributionMgrClient tDown : _downlinks) {
+                    
+                    
+                    for (final Iterator<DistributionMgrClient> tItr
+                            = _downlinks.iterator(); tItr.hasNext(); ) {
+                        final DistributionMgrClient tDown = tItr.next();
                         if (_done)
                         {
                             return;
@@ -96,7 +101,7 @@ public class DistributionMgr implements Runnable {
                                     "Removing client %s",
                                     tDown.getConnectionName()));                               
                             tDown.halt();
-                            _downlinks.remove(tDown);
+                            tItr.remove();
                             continue;
                         }
 

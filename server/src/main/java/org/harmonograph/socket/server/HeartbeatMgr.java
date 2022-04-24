@@ -3,21 +3,22 @@ package org.harmonograph.socket.server;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-/** Connection manager for single client connection, uplink mode. */
-public class HeatbeatMgr implements Runnable {
+/** Driver to send a heartbeat message, an empty string,
+ * once a second as a keep-alive for internal logic. */
+public class HeartbeatMgr implements Runnable {
 
     protected final LinkedBlockingQueue<String> _queue;
     protected final Thread _thread;
     protected volatile boolean _done;
 
     private static final Logger kLogger
-            = Logger.getLogger(HeatbeatMgr.class.getName());     
+            = Logger.getLogger(HeartbeatMgr.class.getName());     
     
     /**
      * Simple constructor.
      * @param aQueue Message queue
      */
-    public HeatbeatMgr(
+    public HeartbeatMgr(
             final LinkedBlockingQueue<String> aQueue) {
         _queue = aQueue;
         _thread = new Thread(this, "Heartbeat");

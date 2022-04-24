@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 /**
  * Socket server relay application.
- * This pulls from port and pushes to another.
+ * This pulls from one port and pushes to another.
  */
 public class SockServerRelay {
     /** Server for up-link connections. */
@@ -24,7 +24,7 @@ public class SockServerRelay {
     protected final ArchiveMgrS3 _archiveMgrS3;
     
     /** Heartbeat Manager. */
-    protected final HeatbeatMgr _heartbeatMgr;
+    protected final HeartbeatMgr _heartbeatMgr;
     
     
     /** Queue of messages between up-link and down-link, merged. */
@@ -75,7 +75,7 @@ public class SockServerRelay {
         _downlinkServer = new ServerConnectionMgrDownlink(
                 aDownlinkPort, aVerbose, aBufferSize, _queue, _distributionMgr);
         
-        _heartbeatMgr = new HeatbeatMgr(_queue);
+        _heartbeatMgr = new HeartbeatMgr(_queue);
         
         System.out.print(String.format(
                 "SockServerRelay, uplink %d, downlink %d, verbose %b%n",

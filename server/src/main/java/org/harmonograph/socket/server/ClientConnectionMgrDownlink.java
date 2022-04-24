@@ -88,6 +88,11 @@ public class ClientConnectionMgrDownlink
         {
             return false;
         }
+
+        if (!_socket.isConnected())
+        {
+            return false;
+        }        
         
         final int tBacklog = _queue.size();
         if ((tBacklog > 0) && (tBacklog % Utility.kBacklogMessagesWarning == 0))
