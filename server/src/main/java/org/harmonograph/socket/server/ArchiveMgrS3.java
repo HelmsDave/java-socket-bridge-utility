@@ -50,6 +50,12 @@ public class ArchiveMgrS3 implements Runnable {
         _thread.interrupt();
     }
 
+     public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        return tStatus.toString();
+    }    
+    
     @Override
     public void run() {
 

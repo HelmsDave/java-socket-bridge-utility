@@ -93,6 +93,12 @@ public class ArchiveMgr implements Runnable, DistributionMgrClient {
         _thread.interrupt();
     }
 
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        return tStatus.toString();
+    }     
+    
     @Override
     public void run() {
         try {

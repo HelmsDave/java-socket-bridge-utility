@@ -73,6 +73,18 @@ public final class SockServerRelayMain {
                 = new SockServerRelay(tUplinkPort, tDownlinkPort,
                         tVerbose, tBufferSize, tName, tArchive);
         tServer.start();
+        while (true)
+        {
+            try
+            {
+               Thread.sleep(0L * 60L * 1000L);
+            } catch (final InterruptedException tEx)
+            {
+            }
+            
+            final String tStatus = tServer.getStatus();
+            kLogger.info(tStatus);
+        }
     }
     
 static class LocalFormatter extends Formatter {

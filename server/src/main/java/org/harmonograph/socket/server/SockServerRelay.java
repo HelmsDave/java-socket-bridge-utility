@@ -110,4 +110,17 @@ public class SockServerRelay {
         _archiveMgrS3.halt();
     }    
   
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        tStatus.append(String.format("Main Queue: %,d%n", _queue.size()));
+        tStatus.append(_uplinkServer.getStatus());
+        tStatus.append(_distributionMgr.getStatus());
+        tStatus.append(_downlinkServer.getStatus());
+        tStatus.append(_archiveMgr.getStatus());
+        tStatus.append(_archiveMgrZip.getStatus());
+        tStatus.append(_archiveMgrS3.getStatus());
+        
+        return tStatus.toString();
+    }
 }

@@ -85,6 +85,13 @@ public class ServerConnectionMgrDownlink implements Runnable {
         _threadServerListener.interrupt();
     }    
   
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        tStatus.append(String.format("Downlink Connection Count: %,d%n", _connectionCount)); 
+        return tStatus.toString();
+    }      
+    
     @Override
     public void run() {
         while (true) {

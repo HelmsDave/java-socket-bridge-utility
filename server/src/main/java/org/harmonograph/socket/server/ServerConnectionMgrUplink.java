@@ -70,6 +70,13 @@ public class ServerConnectionMgrUplink {
         _threadServerListener.interrupt();
     }       
 
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        tStatus.append(String.format("Uplink Connection Count: %,d%n", _connectionCount)); 
+        return tStatus.toString();
+    }    
+    
     /** Thread to listen for client connections */
     class ServerListener implements Runnable {
 

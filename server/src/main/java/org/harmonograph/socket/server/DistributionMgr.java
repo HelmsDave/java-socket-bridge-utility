@@ -1,6 +1,6 @@
 package org.harmonograph.socket.server;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -70,7 +70,13 @@ public class DistributionMgr implements Runnable {
             tDown.halt();
         }
     }    
-
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        tStatus.append(String.format("Distribution Consumers: %,d%n", _downlinks.size())); 
+        return tStatus.toString();
+    }  
+    
         @Override
         public void run() {
             while (!_done) {
@@ -88,10 +94,8 @@ public class DistributionMgr implements Runnable {
                         continue;
                     }
                     
-                    
-                    for (final Iterator<DistributionMgrClient> tItr
-                            = _downlinks.iterator(); tItr.hasNext(); ) {
-                        final DistributionMgrClient tDown = tItr.next();
+                    final List<DistributionMgrClient> tToRemove = new ArrayList<>();
+                    for (final DistributionMgrClient tDown : _downlinks) {
                         if (_done)
                         {
                             return;
@@ -101,11 +105,15 @@ public class DistributionMgr implements Runnable {
                                     "Removing client %s",
                                     tDown.getConnectionName()));                               
                             tDown.halt();
-                            tItr.remove();
+                            tToRemove.add(tDown);
                             continue;
                         }
 
                         tDown.getQueue().put(tLine);
+                    }
+                    if (!tToRemove.isEmpty())
+                    {
+                        _downlinks.removeAll(tToRemove);
                     }
                     
                     if (_verbose) {

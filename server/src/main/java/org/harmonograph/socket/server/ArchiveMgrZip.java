@@ -53,6 +53,12 @@ public class ArchiveMgrZip implements Runnable {
         _thread.interrupt();
     }
 
+    public String getStatus()
+    {
+        final StringBuilder tStatus = new StringBuilder();
+        return tStatus.toString();
+    }     
+    
     @Override
     public void run() {
         final byte[] tBuffer = new byte[Utility.kDiskBufferSize];
