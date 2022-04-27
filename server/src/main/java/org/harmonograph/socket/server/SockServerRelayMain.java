@@ -77,7 +77,7 @@ public final class SockServerRelayMain {
         {
             try
             {
-               Thread.sleep(0L * 60L * 1000L);
+               Thread.sleep(10L * 60L * 1000L);
             } catch (final InterruptedException tEx)
             {
             }
